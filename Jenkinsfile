@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('ci') {
             when {
-              expression { (branch == 'testing') 
+                expression { env.BRANCH_NAME == 'testing' } 
             }
             steps {
                 echo 'deploying...'
@@ -12,23 +12,21 @@ pipeline {
                     docker build -t app .
                     docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                     docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
-                    docker run --name app --rm app python3 -m unittest discover -s tests -v
-                    
+                    docker run --rm app python3 -m unittest discover -s tests -v
                 """
-            }
             }
         }
         stage('cd') {
             when { 
-                branch 'master'
+                branch 'master'  
             }
             steps {
                 sh """
+                    docker rm -f app || true
                     docker run --name app -d app
-                    docker exec app bash -c "python3 api.py & sleep 2 && curl localhost:5000/health "
+                    docker exec app bash -c "python3 api.py & sleep 2 && curl localhost:5000/health"
                 """
             }
         }
     }
-
 }
