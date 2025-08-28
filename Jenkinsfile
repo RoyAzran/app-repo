@@ -8,7 +8,7 @@ pipeline {
                  docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker run --name app -d app
-                 docker exec app bash -c "app python3 api.py& && curl localhost:5000/health && python3 -m unittest discover -s tests -v"
+                 docker exec app bash -c "app python3 api.py & && curl localhost:5000/health && python3 -m unittest discover -s tests -v"
  """
         }
     }
