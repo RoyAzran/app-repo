@@ -29,7 +29,7 @@ pipeline {
             }
             steps {
                 sh """
-                    whoami
+                    
                     hostname
                     ls
                     ssh -i key ec2-user@18.212.20.28
