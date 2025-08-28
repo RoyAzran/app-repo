@@ -3,7 +3,10 @@ pipeline {
     stages {
         stage('ci') {
             when {
-                expression { env.CHANGE_BRANCH == 'testing' } 
+                anyOf {
+                branch 'testing'
+                expression { env.CHANGE_BRANCH == 'testing' }
+                }
             }
             steps {
                 echo 'deploying...'
