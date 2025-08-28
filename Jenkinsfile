@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('ci') {
             when {
-                changeRequest()
+                branch 'testing'
             }
             steps {
                 sh """
