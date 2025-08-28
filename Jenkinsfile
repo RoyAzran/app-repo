@@ -6,6 +6,7 @@ pipeline {
                 branch 'testing'
             }
             steps {
+                echo 'deploying...'
                 sh """
                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 992382545251.dkr.ecr.us-east-1.amazonaws.com
                     docker build -t app .
