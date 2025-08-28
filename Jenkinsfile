@@ -10,7 +10,7 @@ pipeline {
             }
         stage('deploy to container and recive health check'){
             steps{
-                sh """ CONTAINER_ID=$(docker run -d app)
+                sh """ CONTAINER_ID=\$(docker run -d app)
                  docker exec -it $CONTAINER_ID curl localhost:5000/health """
                 
         }
