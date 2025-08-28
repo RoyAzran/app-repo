@@ -25,6 +25,7 @@ pipeline {
                     branch 'main'
                     expression { env.CHANGE_BRANCH == 'main' }
             }
+            }
             steps {
                 sh """
                     docker rm -f app || true
