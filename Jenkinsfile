@@ -7,7 +7,7 @@ pipeline {
                  docker build -t app .
                  docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
-                 docker run --name app -i -d app curl localhost:5000/health > file.txt cat file.txt """
+                 docker run --name app -i -d app curl localhost:5000/health """
         }
     }
     }
