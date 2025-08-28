@@ -1,9 +1,9 @@
 FROM python:3.9
 
-WORKDIR /app
+WORKDIR  /calculator-app-v2
 
 COPY . .
-RUN pip install --no-cache-dir -r calculator-app-v2/requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
 
 EXPOSE 5000
 
