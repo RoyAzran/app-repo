@@ -16,6 +16,7 @@ pipeline {
                     
                 """
             }
+            }
         }
         stage('cd') {
             when { 
@@ -29,5 +30,5 @@ pipeline {
             }
         }
     }
-}
+
 }
