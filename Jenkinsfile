@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('ci') {
             when {
-                branch 'testing'
+              expression { (branch == 'testing') 
             }
             steps {
                 echo 'deploying...'
@@ -29,4 +29,5 @@ pipeline {
             }
         }
     }
+}
 }
