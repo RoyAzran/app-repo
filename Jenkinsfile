@@ -8,8 +8,8 @@ pipeline {
                  docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app """
             }
-        stage('deploy to container and recive health check'){
-            steps{
+        stage('deploy to container and recive health check') {
+            steps {
                 sh """ CONTAINER_ID=\$(docker run -d app)
                  docker exec -it $CONTAINER_ID curl localhost:5000/health """
                 
