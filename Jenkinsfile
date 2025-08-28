@@ -21,7 +21,9 @@ pipeline {
         }
         stage('cd') {
             when { 
-                branch 'master'  
+                anyOf {
+                    branch 'main'
+                    expression { env.CHANGE_BRANCH == 'main' }
             }
             steps {
                 sh """
