@@ -7,8 +7,7 @@ pipeline {
                  docker build -t app .
                  docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
-                 docker run --name app -i -d app 
-                 docker exec -it app python3 -m unittest discover -s tests -v """
+                 docker run --name app -i --rm app sh 'app python3 -m unittest discover -s tests -v' """
         }
     }
     }
