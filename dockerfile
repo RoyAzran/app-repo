@@ -4,8 +4,8 @@ WORKDIR /app
 
 COPY . /app
 RUN echo "Flask==3.0.0" > requirements.txt
-RUN python3 -m unittest discover -s tests -v
 RUN pip install --no-cache-dir -r requirements.txt
+RUN python3 -m unittest discover -s tests -v
 
 EXPOSE 5000
 
