@@ -8,8 +8,8 @@ pipeline {
                  docker tag app:latest 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker push 992382545251.dkr.ecr.us-east-1.amazonaws.com/roy-docker:app
                  docker run --name app -d -i app 
-                  docker exec -it app apt-get -y install curl 
-                   docker exec -it app curl localhost:5000/health """
+                  docker exec app bash -c "apt-get -y install curl" 
+                   docker exec app bash -c "curl localhost:5000/health" """
         }
     }
     }
