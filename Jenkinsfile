@@ -1,5 +1,5 @@
 pipeline {
-    agent docker { 
+    agent any { 
     stages {
         stage('upload to ecr and build image - CI') 
             steps {
