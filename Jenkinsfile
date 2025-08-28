@@ -31,7 +31,7 @@ pipeline {
                     docker rm -f app || true
                     docker run --name app -d app
                     docker exec app bash -c "python3 api.py & sleep 2 && curl localhost:5000/health
-                    echo $? == 1 || exit 0 "
+                    echo $? == 1 || exit 0
                 """
             }
         }
