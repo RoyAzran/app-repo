@@ -30,7 +30,7 @@ pipeline {
                 sh """
                     docker rm -f app || true
                     docker run --name app -d app
-                    docker exec app bash -c "python3 api.py & sleep 2 && curl localhost:5000/health
+                    docker exec app bash -c "python3 api.py & sleep 2 && curl localhost:5000/health"
                 """
            
             
