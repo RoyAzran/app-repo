@@ -1,0 +1,21 @@
+# Secrets — never commit
+.env
+*.db
+*.sqlite3
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Temp / dev scripts
+_*.txt
+_*.py
+
+# Vercel
+.vercel/

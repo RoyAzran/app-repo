@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agency MCP — Onboarding</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #1a1a1a; }
+    .container { max-width: 560px; margin: 60px auto; padding: 0 20px; }
+    h1 { font-size: 1.8rem; margin-bottom: 6px; }
+    .subtitle { color: #666; margin-bottom: 32px; font-size: 0.95rem; }
+    .card { background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 99px; font-weight: 600; }
+    .badge-ok  { background: #d4edda; color: #155724; }
+    .badge-pending { background: #fff3cd; color: #856404; }
+    .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; font-weight: 600;
+           font-size: 0.9rem; text-decoration: none; cursor: pointer; border: none; transition: opacity .15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-google { background: #4285f4; color: #fff; }
+    .btn-meta   { background: #1877f2; color: #fff; }
+    .token-box { margin-top: 24px; }
+    .token-box label { font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; color: #555; }
+    .token-box textarea { width: 100%; height: 80px; font-family: monospace; font-size: 0.8rem;
+                          border: 1px solid #ccc; border-radius: 6px; padding: 10px; resize: none; }
+    .copy-btn { margin-top: 8px; background: #f0f0f0; color: #333; }
+    .config-block { background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 16px;
+                    font-family: monospace; font-size: 0.78rem; white-space: pre; overflow-x: auto; margin-top: 16px; }
+    .note { font-size: 0.82rem; color: #888; margin-top: 8px; }
+    .step-num { background: #eee; border-radius: 50%; width: 22px; height: 22px;
+                display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Agency MCP Server</h1>
+  <p class="subtitle">Connect your accounts once — then use MCP from Claude or any LLM client.</p>
+
+  <!-- Step 1: Google -->
+  <div class="card">
+    <h2>
+      <span class="step-num">1</span>
+      Connect Google Account
+      <span id="google-badge" class="badge badge-pending">●&nbsp;Pending</span>
+    </h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px;">
+      Covers Google Ads (MCC), Google Analytics 4, Search Console, and Google Sheets.
+    </p>
+    <a id="google-btn" href="#" class="btn btn-google">Connect with Google</a>
+  </div>
+
+  <!-- Step 2: Meta -->
+  <div class="card">
+    <h2>
+      <span class="step-num">2</span>
+      Connect Meta Account
+      <span id="meta-badge" class="badge badge-pending">●&nbsp;Pending</span>
+    </h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px;">
+      Covers Meta Ads (all accounts you manage) and Facebook Pages.
+    </p>
+    <a id="meta-btn" href="#" class="btn btn-meta">Connect with Meta</a>
+  </div>
+
+  <!-- Step 3: JWT -->
+  <div class="card" id="jwt-card" style="display:none;">
+    <h2>
+      <span class="step-num">3</span>
+      Your MCP API Token
+    </h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px;">
+      Copy this token. You will paste it into your MCP client configuration.<br>
+      Keep it secret — it grants access to all your connected ad accounts.
+    </p>
+    <div class="token-box">
+      <label>JWT Token (valid 90 days)</label>
+      <textarea id="jwt-token" readonly></textarea>
+      <button class="btn copy-btn" onclick="copyToken()">Copy Token</button>
+    </div>
+
+    <div style="margin-top:20px;">
+      <label style="font-size:0.85rem;font-weight:600;color:#555;">Claude Desktop config snippet</label>
+      <div class="config-block" id="config-snippet"></div>
+    </div>
+    <p class="note">Add this to your <code>~/.claude/claude_desktop_config.json</code> (Mac/Linux) or <code>%APPDATA%\Claude\claude_desktop_config.json</code> (Windows).</p>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const userId = params.get("user_id") || localStorage.getItem("mcp_user_id") || "";
+  if (userId) localStorage.setItem("mcp_user_id", userId);
+
+  const googleOk = params.get("google_ok") === "1" || localStorage.getItem("google_ok") === "1";
+  const metaOk   = params.get("meta_ok")   === "1" || localStorage.getItem("meta_ok")   === "1";
+
+  if (params.get("google_ok") === "1") localStorage.setItem("google_ok", "1");
+  if (params.get("meta_ok")   === "1") localStorage.setItem("meta_ok",   "1");
+
+  function setStatus(id, ok) {
+    const el = document.getElementById(id);
+    el.textContent = ok ? "✓ Connected" : "● Pending";
+    el.className = "badge " + (ok ? "badge-ok" : "badge-pending");
+  }
+  setStatus("google-badge", googleOk);
+  setStatus("meta-badge",   metaOk);
+
+  // Build OAuth URLs with user_id so we link to the existing account
+  const uid = userId ? `?user_id=${userId}` : "";
+  document.getElementById("google-btn").href = `/auth/google/start${uid}`;
+  document.getElementById("meta-btn").href   = `/auth/meta/start${uid}`;
+
+  // If both connected, fetch JWT
+  if (googleOk && metaOk && userId) {
+    fetch(`/admin/users/${userId}/token`, { headers: { "X-Admin-Bootstrap": "true" } })
+      .then(r => r.json())
+      .then(data => {
+        if (data.token) {
+          document.getElementById("jwt-card").style.display = "block";
+          document.getElementById("jwt-token").value = data.token;
+
+          const serverUrl = location.origin;
+          const snippet = JSON.stringify({
+            mcpServers: {
+              "agency-tools": {
+                url: `${serverUrl}/mcp`,
+                headers: { Authorization: `Bearer ${data.token}` }
+              }
+            }
+          }, null, 2);
+          document.getElementById("config-snippet").textContent = snippet;
+        }
+      });
+  }
+
+  function copyToken() {
+    const ta = document.getElementById("jwt-token");
+    ta.select();
+    navigator.clipboard.writeText(ta.value).then(() => alert("Token copied!"));
+  }
+</script>
+</body>
+</html>
