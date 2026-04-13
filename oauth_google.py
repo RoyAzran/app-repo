@@ -23,8 +23,14 @@ def _cfg():
     return (
         os.environ.get("GOOGLE_CLIENT_ID", ""),
         os.environ.get("GOOGLE_CLIENT_SECRET", ""),
-        os.environ.get("SERVER_BASE_URL", "http://localhost:8000"),
     )
+
+
+def _base_url(request: Request) -> str:
+    """Derive base URL from request, respecting Vercel/proxy forwarded headers."""
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    host = request.headers.get("x-forwarded-host", request.url.netloc)
+    return f"{proto}://{host}"
 
 # All scopes needed across all Google platforms
 SCOPES = " ".join([
@@ -42,13 +48,13 @@ SCOPES = " ".join([
 @router.get("/start")
 async def google_start(request: Request, user_id: str = ""):
     """Initiate Google OAuth. Pass user_id if re-linking an existing account."""
-    client_id, _, server_base = _cfg()
+    client_id, _ = _cfg()
     state = secrets.token_urlsafe(32)
     create_oauth_state(state, user_id)
 
     params = {
         "client_id": client_id,
-        "redirect_uri": f"{server_base}/auth/google/callback",
+        "redirect_uri": f"{_base_url(request)}/auth/google/callback",
         "response_type": "code",
         "scope": SCOPES,
         "access_type": "offline",
@@ -68,8 +74,8 @@ async def google_callback(request: Request, code: str = "", state: str = "", err
     if existing_user_id is None:
         return HTMLResponse("<p>Invalid or expired OAuth state. <a href='/onboard'>Try again</a>.</p>", status_code=400)
 
-    client_id, client_secret, server_base = _cfg()
-    redirect_uri = f"{server_base}/auth/google/callback"
+    client_id, client_secret = _cfg()
+    redirect_uri = f"{_base_url(request)}/auth/google/callback"
     # Exchange authorization code for tokens
     async with httpx.AsyncClient() as client:
         resp = await client.post(

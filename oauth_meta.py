@@ -26,8 +26,14 @@ def _cfg():
     return (
         os.environ.get("META_APP_ID", ""),
         os.environ.get("META_APP_SECRET", ""),
-        os.environ.get("SERVER_BASE_URL", "http://localhost:8000"),
     )
+
+
+def _base_url(request: Request) -> str:
+    """Derive base URL from request, respecting Vercel/proxy forwarded headers."""
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
+    host = request.headers.get("x-forwarded-host", request.url.netloc)
+    return f"{proto}://{host}"
 
 SCOPES = ",".join([
     "ads_read",
@@ -48,13 +54,13 @@ SCOPES = ",".join([
 
 @router.get("/start")
 async def meta_start(request: Request, user_id: str = ""):
-    app_id, _, server_base = _cfg()
+    app_id, _ = _cfg()
     state = secrets.token_urlsafe(32)
     create_oauth_state(state, user_id)
 
     params = {
         "client_id": app_id,
-        "redirect_uri": f"{server_base}/auth/meta/callback",
+        "redirect_uri": f"{_base_url(request)}/auth/meta/callback",
         "scope": SCOPES,
         "response_type": "code",
         "state": state,
@@ -72,8 +78,8 @@ async def meta_callback(request: Request, code: str = "", state: str = "", error
     if existing_user_id is None:
         return HTMLResponse("<p>Invalid or expired OAuth state. <a href='/onboard'>Try again</a>.</p>", status_code=400)
 
-    app_id, app_secret, server_base = _cfg()
-    redirect_uri = f"{server_base}/auth/meta/callback"
+    app_id, app_secret = _cfg()
+    redirect_uri = f"{_base_url(request)}/auth/meta/callback"
     # Step 1: Exchange code for short-lived token
     async with httpx.AsyncClient() as client:
         resp = await client.get(
