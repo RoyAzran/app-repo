@@ -73,7 +73,7 @@ class MCPPathFix:
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
             scope = dict(scope)
-            scope["path"] = "/mcp" + scope.get("path", "")
+            scope["path"] = "/mcp"   # exact path FastMCP's route expects (never /mcp/)
         await self._app(scope, receive, send)
 
 
