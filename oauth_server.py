@@ -13,13 +13,13 @@ import base64
 import hashlib
 import os
 import secrets
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from auth import create_jwt
-from database import activate_oauth_code, consume_oauth_code, create_oauth_state, create_pending_oauth_code
+from database import activate_oauth_code, consume_oauth_code, create_oauth_state, create_pending_oauth_code, read_oauth_code
 
 router = APIRouter(tags=["oauth-server"])
 
