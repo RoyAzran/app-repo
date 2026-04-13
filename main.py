@@ -33,13 +33,21 @@ from permissions import Role
 
 
 # ---------------------------------------------------------------------------
+# Build the MCP ASGI app early — lifespan needs _session_manager
+# ---------------------------------------------------------------------------
+_mcp_starlette = mcp.streamable_http_app()
+
+
+# ---------------------------------------------------------------------------
 # Startup / shutdown
 # ---------------------------------------------------------------------------
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
-    yield
+    # Start the MCP session manager's task group so handle_request works
+    async with mcp._session_manager.run():
+        yield
 
 
 # ---------------------------------------------------------------------------
@@ -59,23 +67,46 @@ app.include_router(oauth_server_router)
 
 
 # ---------------------------------------------------------------------------
+# Intercept /mcp at the ASGI level — before FastAPI routing.
+# This avoids app.mount() trailing-slash redirects entirely.
+# ---------------------------------------------------------------------------
+
+_original_asgi = app.build_middleware_stack  # FastAPI builds this lazily
+
+class ASGIInterceptor:
+    """Wraps the entire FastAPI ASGI app.
+    Requests to /mcp (or /mcp/) are forwarded directly to the MCP sub-app;
+    everything else passes through to FastAPI as normal."""
+
+    def __init__(self):
+        self._fastapi_app = None
+
+    def _get_fastapi(self):
+        # Lazily resolve. We can't call build_middleware_stack at import time.
+        if self._fastapi_app is None:
+            self._fastapi_app = _original_asgi()
+        return self._fastapi_app
+
+    async def __call__(self, scope, receive, send):
+        path = scope.get("path", "")
+        if scope["type"] in ("http", "websocket") and (path == "/mcp" or path == "/mcp/"):
+            # Rewrite path to /mcp (what FastMCP's internal route expects)
+            scope = dict(scope)
+            scope["path"] = "/mcp"
+            await _mcp_wrapped(scope, receive, send)
+        else:
+            await self._get_fastapi()(scope, receive, send)
+
+_interceptor = ASGIInterceptor()
+
+# Override build_middleware_stack so Uvicorn picks up our interceptor
+app.build_middleware_stack = lambda: _interceptor
+
+
+# ---------------------------------------------------------------------------
 # ASGI auth wrapper — wraps the MCP sub-app at ASGI level
 # This is necessary because FastAPI middleware is bypassed for mounted apps.
 # ---------------------------------------------------------------------------
-
-class MCPPathFix:
-    """FastMCP registers its route at /mcp internally, but when mounted at /mcp
-    in FastAPI, Starlette strips the prefix so the sub-app receives '/'. This
-    restores the /mcp prefix so the internal route matches."""
-    def __init__(self, app):
-        self._app = app
-
-    async def __call__(self, scope, receive, send):
-        if scope["type"] == "http":
-            scope = dict(scope)
-            scope["path"] = "/mcp"   # exact path FastMCP's route expects (never /mcp/)
-        await self._app(scope, receive, send)
-
 
 class MCPAuthWrapper:
     """ASGI middleware that validates JWT and injects user into current_user_ctx."""
@@ -122,9 +153,8 @@ class MCPAuthWrapper:
         await ctx.run(run_in_ctx)
 
 
-# Mount the MCP app at /mcp behind the auth + path-fix wrappers
-mcp_asgi = mcp.streamable_http_app()
-app.mount("/mcp", MCPAuthWrapper(MCPPathFix(mcp_asgi)))
+# Build the auth-wrapped MCP ASGI handler
+_mcp_wrapped = MCPAuthWrapper(_mcp_starlette)
 
 
 # ---------------------------------------------------------------------------
