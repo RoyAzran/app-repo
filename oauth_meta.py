@@ -42,7 +42,6 @@ SCOPES = ",".join([
     "instagram_basic",
     "instagram_manage_insights",
     "instagram_content_publish",
-    "email",
     "public_profile",
 ])
 
