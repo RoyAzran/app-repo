@@ -28,6 +28,7 @@ import mcp_server  # noqa: F401 — registers all tools onto mcp singleton
 from mcp_instance import mcp
 from oauth_google import router as google_router
 from oauth_meta import router as meta_router
+from oauth_server import router as oauth_server_router
 from permissions import Role
 
 
@@ -54,6 +55,7 @@ app = FastAPI(
 
 app.include_router(google_router)
 app.include_router(meta_router)
+app.include_router(oauth_server_router)
 
 
 # ---------------------------------------------------------------------------

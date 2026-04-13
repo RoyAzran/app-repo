@@ -136,3 +136,89 @@ def consume_oauth_state(state: str) -> str | None:
         return user_id
     finally:
         db.close()
+
+
+# ---------------------------------------------------------------------------
+# OAuth authorization codes — for the OAuth2 server (Claude.ai connector)
+# ---------------------------------------------------------------------------
+
+class OAuthCode(Base):
+    __tablename__ = "oauth_codes"
+
+    code = Column(String, primary_key=True)
+    user_id = Column(String, nullable=True)           # set after user authenticates
+    redirect_uri = Column(String, nullable=False)
+    code_challenge = Column(String, nullable=True)
+    code_challenge_method = Column(String, nullable=True)
+    client_id = Column(String, nullable=False, default="")
+    original_state = Column(String, nullable=False, default="")
+    status = Column(String, nullable=False, default="pending")  # pending | ready | used
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+
+
+def create_pending_oauth_code(
+    redirect_uri: str,
+    code_challenge: str,
+    code_challenge_method: str,
+    client_id: str,
+    original_state: str,
+) -> str:
+    """Create a pending authorization code and return the code string."""
+    import secrets as _secrets
+    code = _secrets.token_urlsafe(32)
+    db = SessionLocal()
+    try:
+        db.add(OAuthCode(
+            code=code,
+            redirect_uri=redirect_uri,
+            code_challenge=code_challenge,
+            code_challenge_method=code_challenge_method,
+            client_id=client_id,
+            original_state=original_state,
+        ))
+        db.commit()
+    finally:
+        db.close()
+    return code
+
+
+def activate_oauth_code(code: str, user_id: str) -> tuple[str, str] | None:
+    """
+    Mark a pending code as ready with the authenticated user_id.
+    Returns (redirect_uri, original_state) or None if not found / wrong status.
+    """
+    db = SessionLocal()
+    try:
+        row = db.get(OAuthCode, code)
+        if row is None or row.status != "pending":
+            return None
+        row.user_id = user_id
+        row.status = "ready"
+        db.commit()
+        return (row.redirect_uri, row.original_state)
+    finally:
+        db.close()
+
+
+def consume_oauth_code(code: str) -> tuple[str, str, str, str] | None:
+    """
+    Exchange an authorization code for user data (deletes the row).
+    Returns (user_id, code_challenge, code_challenge_method, redirect_uri) or None.
+    Valid for 5 minutes after creation.
+    """
+    db = SessionLocal()
+    try:
+        row = db.get(OAuthCode, code)
+        if row is None or row.status != "ready":
+            return None
+        age = datetime.now(timezone.utc) - row.created_at.replace(tzinfo=timezone.utc)
+        if age > timedelta(minutes=5):
+            db.delete(row)
+            db.commit()
+            return None
+        result = (row.user_id, row.code_challenge or "", row.code_challenge_method or "S256", row.redirect_uri)
+        db.delete(row)
+        db.commit()
+        return result
+    finally:
+        db.close()
