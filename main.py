@@ -148,7 +148,18 @@ class MCPAuthWrapper:
 
         async def run_in_ctx():
             current_user_ctx.set(user)
-            await self._app(scope, receive, send)
+            try:
+                await self._app(scope, receive, send)
+            except Exception as exc:
+                import traceback
+                tb = traceback.format_exc()
+                body = f'{{"detail":"MCP error: {type(exc).__name__}: {exc}","traceback":"{tb[:500]}"}}'.encode()
+                await send({
+                    "type": "http.response.start",
+                    "status": 500,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())],
+                })
+                await send({"type": "http.response.body", "body": body})
 
         await ctx.run(run_in_ctx)
 
