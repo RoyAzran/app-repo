@@ -212,7 +212,7 @@ def consume_oauth_code(code: str) -> tuple[str, str, str, str] | None:
         if row is None or row.status != "ready":
             return None
         age = datetime.now(timezone.utc) - row.created_at.replace(tzinfo=timezone.utc)
-        if age > timedelta(minutes=5):
+        if age > timedelta(minutes=30):  # 30 minutes — enough for two OAuth flows
             db.delete(row)
             db.commit()
             return None

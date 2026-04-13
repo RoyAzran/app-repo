@@ -63,6 +63,20 @@ app.include_router(oauth_server_router)
 # This is necessary because FastAPI middleware is bypassed for mounted apps.
 # ---------------------------------------------------------------------------
 
+class MCPPathFix:
+    """FastMCP registers its route at /mcp internally, but when mounted at /mcp
+    in FastAPI, Starlette strips the prefix so the sub-app receives '/'. This
+    restores the /mcp prefix so the internal route matches."""
+    def __init__(self, app):
+        self._app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            scope = dict(scope)
+            scope["path"] = "/mcp" + scope.get("path", "")
+        await self._app(scope, receive, send)
+
+
 class MCPAuthWrapper:
     """ASGI middleware that validates JWT and injects user into current_user_ctx."""
 
@@ -108,9 +122,9 @@ class MCPAuthWrapper:
         await ctx.run(run_in_ctx)
 
 
-# Mount the MCP app at /mcp behind the auth wrapper
+# Mount the MCP app at /mcp behind the auth + path-fix wrappers
 mcp_asgi = mcp.streamable_http_app()
-app.mount("/mcp", MCPAuthWrapper(mcp_asgi))
+app.mount("/mcp", MCPAuthWrapper(MCPPathFix(mcp_asgi)))
 
 
 # ---------------------------------------------------------------------------
