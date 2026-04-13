@@ -31,8 +31,8 @@ def _cfg():
 
 def _base_url(request: Request) -> str:
     """Derive base URL from request, respecting Vercel/proxy forwarded headers."""
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    host = request.headers.get("x-forwarded-host", request.url.netloc)
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0].strip()
+    host = request.headers.get("x-forwarded-host", request.url.netloc).split(",")[0].strip()
     return f"{proto}://{host}"
 
 SCOPES = ",".join([
@@ -53,10 +53,12 @@ SCOPES = ",".join([
 
 
 @router.get("/start")
-async def meta_start(request: Request, user_id: str = ""):
+async def meta_start(request: Request, user_id: str = "", return_to: str = ""):
     app_id, _ = _cfg()
     state = secrets.token_urlsafe(32)
-    create_oauth_state(state, user_id)
+    # Encode return_to into the state value so callback can redirect back
+    state_value = f"{user_id}|return:{return_to}" if return_to else user_id
+    create_oauth_state(state, state_value)
 
     params = {
         "client_id": app_id,
@@ -74,9 +76,16 @@ async def meta_callback(request: Request, code: str = "", state: str = "", error
     if error:
         return HTMLResponse(f"<p>Meta OAuth error: {error}. <a href='/onboard'>Try again</a>.</p>", status_code=400)
 
-    existing_user_id = consume_oauth_state(state)
-    if existing_user_id is None:
+    raw_state_value = consume_oauth_state(state)
+    if raw_state_value is None:
         return HTMLResponse("<p>Invalid or expired OAuth state. <a href='/onboard'>Try again</a>.</p>", status_code=400)
+
+    # Detect return_to in state value
+    return_to: str | None = None
+    if "|return:" in (raw_state_value or ""):
+        existing_user_id, return_to = raw_state_value.split("|return:", 1)
+    else:
+        existing_user_id = raw_state_value or ""
 
     app_id, app_secret = _cfg()
     redirect_uri = f"{_base_url(request)}/auth/meta/callback"
@@ -149,6 +158,9 @@ async def meta_callback(request: Request, code: str = "", state: str = "", error
     finally:
         db.close()
 
+    if return_to:
+        separator = "&" if "?" in return_to else "?"
+        return RedirectResponse(f"{return_to}{separator}meta_ok=1")
     return RedirectResponse(f"/onboard?meta_ok=1&user_id={user_id_final}")
 
 

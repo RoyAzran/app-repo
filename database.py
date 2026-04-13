@@ -222,3 +222,17 @@ def consume_oauth_code(code: str) -> tuple[str, str, str, str] | None:
         return result
     finally:
         db.close()
+
+
+def read_oauth_code(code: str) -> tuple[str, str, str] | None:
+    """Read a pending/ready code without consuming it.
+    Returns (user_id, redirect_uri, original_state) or None.
+    """
+    db = SessionLocal()
+    try:
+        row = db.get(OAuthCode, code)
+        if row is None:
+            return None
+        return (row.user_id or "", row.redirect_uri, row.original_state)
+    finally:
+        db.close()

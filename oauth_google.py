@@ -28,8 +28,8 @@ def _cfg():
 
 def _base_url(request: Request) -> str:
     """Derive base URL from request, respecting Vercel/proxy forwarded headers."""
-    proto = request.headers.get("x-forwarded-proto", request.url.scheme)
-    host = request.headers.get("x-forwarded-host", request.url.netloc)
+    proto = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0].strip()
+    host = request.headers.get("x-forwarded-host", request.url.netloc).split(",")[0].strip()
     return f"{proto}://{host}"
 
 # All scopes needed across all Google platforms
@@ -139,13 +139,11 @@ async def google_callback(request: Request, code: str = "", state: str = "", err
     finally:
         db.close()
 
-    # OAuth server flow: activate the pending code and redirect back to Claude
+    # OAuth server flow: activate the pending code and redirect to connect-accounts page
     if pending_oauth_code:
         result = activate_oauth_code(pending_oauth_code, user_id_final)
         if result is None:
             return HTMLResponse("<p>OAuth flow expired. Please try connecting again.</p>", status_code=400)
-        redirect_uri, original_state = result
-        params = urlencode({"code": pending_oauth_code, "state": original_state})
-        return RedirectResponse(f"{redirect_uri}?{params}")
+        return RedirectResponse(f"/oauth/connect-accounts?code={pending_oauth_code}&user_id={user_id_final}")
 
     return RedirectResponse(f"/onboard?google_ok=1&user_id={user_id_final}")
