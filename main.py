@@ -67,43 +67,6 @@ app.include_router(oauth_server_router)
 
 
 # ---------------------------------------------------------------------------
-# Intercept /mcp at the ASGI level — before FastAPI routing.
-# This avoids app.mount() trailing-slash redirects entirely.
-# ---------------------------------------------------------------------------
-
-_original_asgi = app.build_middleware_stack  # FastAPI builds this lazily
-
-class ASGIInterceptor:
-    """Wraps the entire FastAPI ASGI app.
-    Requests to /mcp (or /mcp/) are forwarded directly to the MCP sub-app;
-    everything else passes through to FastAPI as normal."""
-
-    def __init__(self):
-        self._fastapi_app = None
-
-    def _get_fastapi(self):
-        # Lazily resolve. We can't call build_middleware_stack at import time.
-        if self._fastapi_app is None:
-            self._fastapi_app = _original_asgi()
-        return self._fastapi_app
-
-    async def __call__(self, scope, receive, send):
-        path = scope.get("path", "")
-        if scope["type"] in ("http", "websocket") and (path == "/mcp" or path == "/mcp/"):
-            # Rewrite path to /mcp (what FastMCP's internal route expects)
-            scope = dict(scope)
-            scope["path"] = "/mcp"
-            await _mcp_wrapped(scope, receive, send)
-        else:
-            await self._get_fastapi()(scope, receive, send)
-
-_interceptor = ASGIInterceptor()
-
-# Override build_middleware_stack so Uvicorn picks up our interceptor
-app.build_middleware_stack = lambda: _interceptor
-
-
-# ---------------------------------------------------------------------------
 # ASGI auth wrapper — wraps the MCP sub-app at ASGI level
 # This is necessary because FastAPI middleware is bypassed for mounted apps.
 # ---------------------------------------------------------------------------
@@ -148,24 +111,42 @@ class MCPAuthWrapper:
 
         async def run_in_ctx():
             current_user_ctx.set(user)
-            try:
-                await self._app(scope, receive, send)
-            except Exception as exc:
-                import traceback
-                tb = traceback.format_exc()
-                body = f'{{"detail":"MCP error: {type(exc).__name__}: {exc}","traceback":"{tb[:500]}"}}'.encode()
-                await send({
-                    "type": "http.response.start",
-                    "status": 500,
-                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())],
-                })
-                await send({"type": "http.response.body", "body": body})
+            await self._app(scope, receive, send)
 
         await ctx.run(run_in_ctx)
 
 
-# Build the auth-wrapped MCP ASGI handler
+# ---------------------------------------------------------------------------
+# Route /mcp at the ASGI level — before FastAPI routing.
+# app.mount() strips the path prefix, causing mismatches with the Starlette
+# sub-app's route at /mcp.  Instead, we intercept at the ASGI layer.
+# ---------------------------------------------------------------------------
+
 _mcp_wrapped = MCPAuthWrapper(_mcp_starlette)
+_original_asgi = app.build_middleware_stack  # FastAPI builds this lazily
+
+class _ASGIInterceptor:
+    """Requests to /mcp (or /mcp/) go to the MCP sub-app;
+    everything else goes through FastAPI."""
+
+    def __init__(self):
+        self._fastapi_app = None
+
+    def _get_fastapi(self):
+        if self._fastapi_app is None:
+            self._fastapi_app = _original_asgi()
+        return self._fastapi_app
+
+    async def __call__(self, scope, receive, send):
+        path = scope.get("path", "")
+        if scope["type"] in ("http", "websocket") and path.rstrip("/") == "/mcp":
+            scope = dict(scope)
+            scope["path"] = "/mcp"
+            await _mcp_wrapped(scope, receive, send)
+        else:
+            await self._get_fastapi()(scope, receive, send)
+
+app.build_middleware_stack = lambda: _ASGIInterceptor()
 
 
 # ---------------------------------------------------------------------------
