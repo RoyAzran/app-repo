@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-THYFH2QD4D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-THYFH2QD4D');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect to Claude — MCP Tools Setup Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #111118;
+      --bg3: #16161f;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #f0f0f5;
+      --muted: #888899;
+      --accent: #7c6aff;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+    }
+    .page-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .logo span { color: var(--accent); }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 5%;
+    }
+    .progress-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+    }
+    .prog-step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+    .prog-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border2);
+      z-index: 0;
+    }
+    .prog-step.done:not(:last-child)::after { background: var(--green); }
+    .prog-dot {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--border2);
+      background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 700;
+      z-index: 1; position: relative;
+      transition: all .3s;
+    }
+    .prog-step.done .prog-dot { background: var(--green); border-color: var(--green); color: #000; }
+    .prog-step.active .prog-dot { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 16px rgba(124,106,255,0.4); }
+    .prog-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-align: center; }
+    .prog-step.active .prog-label { color: var(--text); }
+    .prog-step.done .prog-label { color: var(--green); }
+
+    /* ── Main ── */
+    .main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 5% 80px;
+    }
+
+    /* ── Step cards ── */
+    .step-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .step-card.active { border-color: rgba(124,106,255,0.4); }
+    .step-card.done { border-color: rgba(34,197,94,0.3); }
+    .step-head {
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .step-num-badge {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 800;
+      flex-shrink: 0;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+    }
+    .step-card.active .step-num-badge { background: rgba(124,106,255,0.15); border-color: rgba(124,106,255,0.3); color: var(--accent); }
+    .step-card.done .step-num-badge { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--green); }
+    .step-title-wrap { flex: 1; }
+    .step-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+    .step-subtitle { font-size: 0.82rem; color: var(--muted); }
+    .step-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 600; padding: 4px 12px;
+      border-radius: 99px;
+    }
+    .status-pending { background: rgba(245,158,11,0.12); color: var(--yellow); border: 1px solid rgba(245,158,11,0.2); }
+    .status-done { background: rgba(34,197,94,0.1); color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
+    .step-body { padding: 0 28px 28px; }
+    .step-body > p { font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; }
+
+    /* ── Button ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 9px;
+      font-family: inherit; font-weight: 700; font-size: 0.92rem;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, background .15s;
+    }
+    .btn-google { background: #4285f4; color: #fff; }
+    .btn-meta   { background: #1877f2; color: #fff; }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 0 30px rgba(124,106,255,0.3); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-ghost { background: var(--bg3); border: 1px solid var(--border2); color: var(--text); }
+    .btn-copy { background: var(--bg3); border: 1px solid var(--border2); color: var(--muted); font-size: 0.8rem; padding: 6px 12px; border-radius: 6px; }
+    .btn-copy:hover { color: var(--text); }
+
+    /* ── Code block ── */
+    .code-block {
+      background: #0d0d14;
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.83rem;
+      color: #c9d1d9;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-block .key { color: #79c0ff; }
+    .code-block .str { color: #a5d6ff; }
+    .code-block .cmt { color: #6e7681; font-style: italic; }
+    .code-copy-btn {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      color: var(--muted);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color .15s;
+    }
+    .code-copy-btn:hover { color: var(--text); }
+
+    /* ── Token box ── */
+    .token-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .token-input {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      outline: none;
+    }
+
+    /* ── Video placeholder ── */
+    .video-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      aspect-ratio: 16/9;
+      margin-bottom: 24px;
+      cursor: pointer;
+    }
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: linear-gradient(135deg, rgba(124,106,255,0.1), rgba(168,85,247,0.05));
+    }
+    .play-btn {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+      transition: transform .2s, background .2s;
+      cursor: pointer;
+    }
+    .play-btn:hover { transform: scale(1.1); background: rgba(255,255,255,0.15); }
+    .play-btn svg { transform: translateX(3px); }
+    .video-label { font-size: 0.88rem; color: var(--muted); }
+    .video-title { font-size: 1rem; font-weight: 600; }
+    /* Actual iframe (hidden until clicked) */
+    .video-iframe { display: none; position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+
+    /* ── Tab chooser ── */
+    .tab-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .15s;
+    }
+    .tab-btn.active { background: rgba(124,106,255,0.15); border-color: rgba(124,106,255,0.35); color: var(--accent); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ── Info callout ── */
+    .callout {
+      display: flex;
+      gap: 12px;
+      background: rgba(124,106,255,0.08);
+      border: 1px solid rgba(124,106,255,0.2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 16px;
+    }
+    .callout-icon { font-size: 1rem; flex-shrink: 0; }
+
+    /* ── Alert ── */
+    .alert {
+      display: flex; gap: 10px; align-items: center;
+      padding: 12px 16px; border-radius: 9px;
+      font-size: 0.85rem; margin-bottom: 16px;
+    }
+    .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2); color: var(--green); }
+
+    /* ── Done card ── */
+    .done-card {
+      background: linear-gradient(135deg, rgba(124,106,255,0.12), rgba(34,197,94,0.08));
+      border: 1px solid rgba(124,106,255,0.3);
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 32px;
+      display: none;
+    }
+    .done-card.show { display: block; }
+    .done-card h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 12px; }
+    .done-card p { color: var(--muted); font-size: 0.9rem; max-width: 400px; margin: 0 auto 24px; }
+    .done-links { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    @media(max-width:640px) {
+      .main { padding: 28px 5% 60px; }
+      .step-head { padding: 18px 18px; }
+      .step-body { padding: 0 18px 20px; }
+      .prog-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="logo">MCP<span>Tools</span></div>
+    <div style="display:flex;align-items:center;gap:16px">
+      <span id="payment-badge" style="font-size:0.8rem;padding:4px 12px;border-radius:99px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);color:var(--green);display:none">✓ Payment confirmed</span>
+      <a href="/billing/status" style="font-size:0.85rem;color:var(--muted);text-decoration:none">Manage Subscription</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Progress ── -->
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="prog-step done" id="prog-pay">
+      <div class="prog-dot">✓</div>
+      <div class="prog-label">Payment</div>
+    </div>
+    <div class="prog-step" id="prog-google">
+      <div class="prog-dot">2</div>
+      <div class="prog-label">Google</div>
+    </div>
+    <div class="prog-step" id="prog-meta">
+      <div class="prog-dot">3</div>
+      <div class="prog-label">Meta</div>
+    </div>
+    <div class="prog-step" id="prog-token">
+      <div class="prog-dot">4</div>
+      <div class="prog-label">Get Token</div>
+    </div>
+    <div class="prog-step" id="prog-claude">
+      <div class="prog-dot">5</div>
+      <div class="prog-label">Connect Claude</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <div style="margin-bottom:36px">
+    <h1 style="font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px">Let's connect your accounts 🚀</h1>
+    <p style="color:var(--muted);font-size:0.95rem">Follow the steps below. It takes about 4 minutes.</p>
+  </div>
+
+  <!-- ── Step 1: Watch video ── -->
+  <div class="step-card active" id="card-video">
+    <div class="step-head">
+      <div class="step-num-badge">▶</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Watch the quick setup guide</div>
+        <div class="step-subtitle">2 minutes · See exactly what you're setting up</div>
+      </div>
+      <div class="step-status status-pending" id="status-video">● Optional</div>
+    </div>
+    <div class="step-body">
+      <div class="video-wrap" id="video-wrap">
+        <div class="video-placeholder" id="video-placeholder">
+          <div class="play-btn" onclick="loadVideo()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <div style="text-align:center">
+            <div class="video-title">How to connect MCP Tools to Claude</div>
+            <div class="video-label">Watch before you start · 2 min</div>
+          </div>
+        </div>
+        <!-- Replace VIDEO_ID with your YouTube video ID -->
+        <iframe id="video-iframe" class="video-iframe" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      </div>
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        <span>The video shows the full flow: connecting Google, connecting Meta, getting your token, and pasting it into Claude. Takes about 4 minutes total.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 2: Connect Google ── -->
+  <div class="step-card" id="card-google">
+    <div class="step-head" onclick="toggleCard('google')">
+      <div class="step-num-badge">1</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Connect Google Account</div>
+        <div class="step-subtitle">Google Ads · Analytics 4 · Search Console · Sheets</div>
+      </div>
+      <div class="step-status status-pending" id="status-google">● Pending</div>
+    </div>
+    <div class="step-body" id="body-google">
+      <p>Click the button below to authorize access to your Google account. You'll be redirected to Google's secure login page and back here automatically.</p>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        <a id="google-btn" href="#" class="btn btn-google">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/></svg>
+          Connect with Google
+        </a>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">🔒</span>
+        <span>We request read + manage permissions for Google Ads, Analytics, and Search Console. Your refresh token is encrypted with AES-128 before storage. <a href="/" style="color:var(--accent)">Learn more about security</a></span>
+      </div>
+
+      <div id="google-ok-msg" style="display:none">
+        <div class="alert alert-success" style="margin-top:16px">✓ Google connected successfully. Move on to Step 2 below.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 3: Connect Meta ── -->
+  <div class="step-card" id="card-meta">
+    <div class="step-head" onclick="toggleCard('meta')">
+      <div class="step-num-badge">2</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Connect Meta / Facebook Account</div>
+        <div class="step-subtitle">Meta Ads · Facebook Pages · Instagram · Business Manager</div>
+      </div>
+      <div class="step-status status-pending" id="status-meta">● Pending</div>
+    </div>
+    <div class="step-body" id="body-meta">
+      <p>Connect your Meta account to enable 200+ Meta Ads, Facebook Pages, and Instagram tools in Claude.</p>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        <a id="meta-btn" href="#" class="btn btn-meta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Connect with Meta
+        </a>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">📋</span>
+        <span>Grant "Manage ads" and "Pages read/write" permissions when prompted. If you manage multiple ad accounts, they'll all be accessible via the <code>meta_ads_list_ad_accounts</code> tool.</span>
+      </div>
+
+      <div id="meta-ok-msg" style="display:none">
+        <div class="alert alert-success" style="margin-top:16px">✓ Meta connected successfully. Your token is ready below.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Step 4: Get Token ── -->
+  <div class="step-card" id="card-token">
+    <div class="step-head" onclick="toggleCard('token')">
+      <div class="step-num-badge">3</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Get your MCP Token</div>
+        <div class="step-subtitle">Your personal access token — connects Claude to your accounts</div>
+      </div>
+      <div class="step-status status-pending" id="status-token">● Pending</div>
+    </div>
+    <div class="step-body" id="body-token">
+      <p>Once both accounts are connected, your MCP token will appear below. This token identifies you to the server — keep it private.</p>
+
+      <div id="token-loading" style="color:var(--muted);font-size:0.9rem;padding:16px 0;display:none">Generating your token…</div>
+      <div id="token-section" style="display:none">
+        <div style="margin-bottom:12px">
+          <label style="font-size:0.8rem;font-weight:600;color:var(--muted);display:block;margin-bottom:8px">YOUR MCP TOKEN</label>
+          <div class="token-box">
+            <input type="password" id="jwt-token" class="token-input" readonly />
+            <button onclick="toggleTokenVis()" class="btn btn-ghost" style="padding:10px 14px;font-size:0.8rem;white-space:nowrap">👁 Show</button>
+            <button onclick="copyToken()" class="btn btn-primary" style="padding:10px 14px;font-size:0.8rem;white-space:nowrap" id="copy-btn">Copy</button>
+          </div>
+        </div>
+        <div class="callout">
+          <span class="callout-icon">⚠️</span>
+          <span>Treat this token like a password. Anyone with this token can access your ad accounts. Don't share it or commit it to code repositories.</span>
+        </div>
+      </div>
+      <div id="token-wait" style="color:var(--muted);font-size:0.88rem;padding:8px 0">Connect both Google and Meta above to generate your token.</div>
+    </div>
+  </div>
+
+  <!-- ── Step 5: Connect to Claude ── -->
+  <div class="step-card" id="card-claude">
+    <div class="step-head" onclick="toggleCard('claude')">
+      <div class="step-num-badge">4</div>
+      <div class="step-title-wrap">
+        <div class="step-title">Add to Claude</div>
+        <div class="step-subtitle">Claude.ai (browser) or Claude Desktop (app)</div>
+      </div>
+      <div class="step-status status-pending" id="status-claude">● Last step</div>
+    </div>
+    <div class="step-body" id="body-claude">
+
+      <!-- Tab selector -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('web')">Claude.ai (recommended)</button>
+        <button class="tab-btn" onclick="switchTab('desktop')">Claude Desktop</button>
+      </div>
+
+      <!-- Claude.ai tab -->
+      <div class="tab-content active" id="tab-web">
+        <p style="margin-bottom:18px">The easiest way — no app installation needed. Works on any device.</p>
+
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">1</div>
+            <div><strong>Open Claude.ai</strong> in your browser and go to <a href="https://claude.ai/settings/integrations" target="_blank" style="color:var(--accent)">Settings → Integrations</a></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">2</div>
+            <div>Click <strong>"Add integration"</strong> and choose <strong>"Custom MCP server"</strong></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">3</div>
+            <div>
+              Paste the <strong>Server URL</strong> below:
+              <div style="margin-top:10px;position:relative;" id="url-block-web">
+                <div class="code-block" style="padding:14px 16px;font-size:0.82rem" id="mcp-url-display-web">Loading...</div>
+                <button class="code-copy-btn" onclick="copyMcpUrl()">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">4</div>
+            <div>
+              In the <strong>"Authorization header"</strong> field, paste your token from Step 3:
+              <div style="margin-top:10px;position:relative;">
+                <div class="code-block" style="padding:14px 16px;font-size:0.82rem" id="auth-header-display">Bearer &lt;your-token-here&gt;</div>
+                <button class="code-copy-btn" onclick="copyAuthHeader()">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">5</div>
+            <div>Click <strong>"Save"</strong> — Claude will verify the connection and show <strong>"MCP Tools: Connected"</strong></div>
+          </div>
+        </div>
+
+        <a href="https://claude.ai/settings/integrations" target="_blank" class="btn btn-primary">Open Claude Integrations →</a>
+      </div>
+
+      <!-- Claude Desktop tab -->
+      <div class="tab-content" id="tab-desktop">
+        <p style="margin-bottom:18px">For Claude Desktop app on Mac or Windows.</p>
+
+        <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px">
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">1</div>
+            <div>
+              Open your Claude Desktop config file:<br>
+              <span style="font-size:0.8rem;color:var(--muted)">Mac/Linux: <code style="color:var(--green)">~/.claude/claude_desktop_config.json</code></span><br>
+              <span style="font-size:0.8rem;color:var(--muted)">Windows: <code style="color:var(--green)">%APPDATA%\Claude\claude_desktop_config.json</code></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">2</div>
+            <div>
+              Add (or merge) this config snippet:
+              <div style="margin-top:10px;position:relative;">
+                <pre class="code-block" id="desktop-snippet" style="white-space:pre-wrap">Loading...</pre>
+                <button class="code-copy-btn" onclick="copyDesktopSnippet()">Copy</button>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(124,106,255,0.15);border:1px solid rgba(124,106,255,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--accent);flex-shrink:0;margin-top:2px">3</div>
+            <div>Save the file and <strong>restart Claude Desktop</strong>. The tools will appear under the 🔌 icon in your chat input.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:16px">
+        <span class="callout-icon">💬</span>
+        <span>Once connected, start a new chat and try: <em>"Show me my Google Ads campaign performance for the last 30 days"</em> — Claude will call the tools automatically.</span>
+      </div>
+
+      <div id="confirm-connected-wrap" style="margin-top:20px;display:none">
+        <button onclick="markDone()" class="btn btn-primary">✓ I'm Connected — Finish Setup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Done ── -->
+  <div class="done-card" id="done-card">
+    <div style="font-size:3rem;margin-bottom:16px">🎉</div>
+    <h2>You're all set!</h2>
+    <p>Your Claude AI is now connected to all your ad platforms. Start a new Claude chat and ask it anything.</p>
+    <div class="done-links">
+      <a href="https://claude.ai/new" target="_blank" class="btn btn-primary">Open Claude →</a>
+      <a href="/billing/status" class="btn btn-ghost">Manage Account</a>
+    </div>
+    <div style="margin-top:24px;padding:16px;background:rgba(255,255,255,0.04);border-radius:10px;text-align:left">
+      <div style="font-size:0.8rem;font-weight:600;color:var(--muted);margin-bottom:10px">STARTER PROMPTS TO TRY</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:0.85rem;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;cursor:pointer" onclick="copyPrompt(this)">"Show me my top 10 Google Ads keywords by ROAS this month"</div>
+        <div style="font-size:0.85rem;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;cursor:pointer" onclick="copyPrompt(this)">"Find any Meta ad sets with frequency over 4 and suggest new audiences"</div>
+        <div style="font-size:0.85rem;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;cursor:pointer" onclick="copyPrompt(this)">"What search terms in Google Ads are costing money but have zero conversions? Add them as negatives."</div>
+        <div style="font-size:0.85rem;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;cursor:pointer" onclick="copyPrompt(this)">"Run an account health audit across Google Ads and Meta and give me the top 5 issues to fix"</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  // ── State ──
+  const params = new URLSearchParams(location.search);
+  const uid = params.get('user_id') || localStorage.getItem('mcp_user_id') || '';
+  if (uid) localStorage.setItem('mcp_user_id', uid);
+  const fromBilling = params.get('activated') === '1';
+  if (fromBilling) {
+    document.getElementById('payment-badge').style.display = 'inline-flex';
+    setTimeout(() => document.getElementById('payment-badge').style.display = 'none', 8000);
+  }
+
+  let googleOk = params.get('google_ok') === '1' || localStorage.getItem('google_ok') === '1';
+  let metaOk   = params.get('meta_ok')   === '1' || localStorage.getItem('meta_ok')   === '1';
+  if (params.get('google_ok') === '1') localStorage.setItem('google_ok', '1');
+  if (params.get('meta_ok')   === '1') localStorage.setItem('meta_ok',   '1');
+
+  const uidQ = uid ? `?user_id=${uid}` : '';
+  document.getElementById('google-btn').href = `/auth/google/start${uidQ}`;
+  document.getElementById('meta-btn').href   = `/auth/meta/start${uidQ}`;
+
+  // ── Dynamic MCP URL / snippet ──
+  const serverUrl = location.origin;
+  const mcpUrl = `${serverUrl}/mcp`;
+  document.getElementById('mcp-url-display-web').textContent = mcpUrl;
+
+  let currentToken = '';
+
+  function updateSnippet(token) {
+    const snippet = JSON.stringify({
+      mcpServers: {
+        "mcp-tools": {
+          url: mcpUrl,
+          headers: { Authorization: `Bearer ${token || '<your-token>'}` }
+        }
+      }
+    }, null, 2);
+    document.getElementById('desktop-snippet').textContent = snippet;
+    if (token) {
+      document.getElementById('auth-header-display').textContent = `Bearer ${token}`;
+    }
+  }
+  updateSnippet('');
+
+  // ── Progress + card states ──
+  function updateProgress() {
+    // Google
+    if (googleOk) {
+      setProgDone('prog-google');
+      setCardDone('card-google', 'status-google');
+      document.getElementById('google-ok-msg').style.display = 'block';
+    } else {
+      setProgActive('prog-google');
+    }
+    // Meta
+    if (metaOk) {
+      setProgDone('prog-meta');
+      setCardDone('card-meta', 'status-meta');
+      document.getElementById('meta-ok-msg').style.display = 'block';
+    } else if (googleOk) {
+      setProgActive('prog-meta');
+    }
+    // Token
+    if (googleOk && metaOk) {
+      setProgActive('prog-token');
+      fetchToken();
+    }
+  }
+
+  function setProgDone(id) {
+    const el = document.getElementById(id);
+    el.classList.add('done');
+    el.querySelector('.prog-dot').textContent = '✓';
+    el.querySelector('.prog-dot').style.color = '#000';
+  }
+  function setProgActive(id) {
+    document.getElementById(id).classList.add('active');
+  }
+
+  function setCardDone(cardId, statusId) {
+    const card = document.getElementById(cardId);
+    card.classList.remove('active');
+    card.classList.add('done');
+    const s = document.getElementById(statusId);
+    s.textContent = '✓ Connected';
+    s.className = 'step-status status-done';
+  }
+
+  function toggleCard(name) {
+    const body = document.getElementById('body-' + name);
+    body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  }
+
+  // ── Fetch JWT ──
+  function fetchToken() {
+    if (!uid) return;
+    const s = document.getElementById('token-section');
+    const loading = document.getElementById('token-loading');
+    const wait = document.getElementById('token-wait');
+    wait.style.display = 'none';
+    loading.style.display = 'block';
+    fetch(`/admin/users/${uid}/token`, { headers: { 'X-Admin-Bootstrap': 'true' } })
+      .then(r => r.json())
+      .then(data => {
+        loading.style.display = 'none';
+        if (data.token) {
+          currentToken = data.token;
+          s.style.display = 'block';
+          document.getElementById('jwt-token').value = data.token;
+          updateSnippet(data.token);
+          setCardDone('card-token', 'status-token');
+          setProgDone('prog-token');
+          setProgActive('prog-claude');
+          // Show confirm button
+          document.getElementById('confirm-connected-wrap').style.display = 'block';
+          setProgActive('prog-claude');
+        }
+      });
+  }
+
+  // ── Copy helpers ──
+  function copyToken() {
+    navigator.clipboard.writeText(document.getElementById('jwt-token').value)
+      .then(() => {
+        const btn = document.getElementById('copy-btn');
+        btn.textContent = '✓ Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+  }
+  function toggleTokenVis() {
+    const inp = document.getElementById('jwt-token');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+  function copyMcpUrl() {
+    navigator.clipboard.writeText(mcpUrl);
+  }
+  function copyAuthHeader() {
+    navigator.clipboard.writeText(document.getElementById('auth-header-display').textContent);
+  }
+  function copyDesktopSnippet() {
+    navigator.clipboard.writeText(document.getElementById('desktop-snippet').textContent);
+  }
+  function copyPrompt(el) {
+    navigator.clipboard.writeText(el.textContent.replace(/^"|"$/g, ''));
+    const orig = el.textContent;
+    el.textContent = '✓ Copied to clipboard!';
+    el.style.color = 'var(--green)';
+    setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 2000);
+  }
+
+  // ── Tabs ──
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+  }
+
+  // ── Done ──
+  function markDone() {
+    document.getElementById('done-card').classList.add('show');
+    setProgDone('prog-claude');
+    document.getElementById('done-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Video ──
+  function loadVideo() {
+    const VIDEO_ID = 'YOUR_YOUTUBE_VIDEO_ID'; // ← replace with actual video ID
+    if (VIDEO_ID === 'YOUR_YOUTUBE_VIDEO_ID') {
+      alert('Video coming soon! Follow the written steps below.');
+      return;
+    }
+    const placeholder = document.getElementById('video-placeholder');
+    const iframe = document.getElementById('video-iframe');
+    iframe.src = `https://www.youtube.com/embed/${VIDEO_ID}?autoplay=1`;
+    placeholder.style.display = 'none';
+    iframe.style.display = 'block';
+    document.getElementById('status-video').textContent = '✓ Watched';
+    document.getElementById('status-video').className = 'step-status status-done';
+  }
+
+  // ── Init ──
+  updateProgress();
+</script>
+</body>
+</html>

@@ -72,7 +72,7 @@ def _resolve_site(svc, site_url: str) -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def list_gsc_sites() -> str:
+def gsc_list_sites() -> str:
     """List all websites the user has access to in Google Search Console."""
     try:
         svc = _svc()
@@ -83,7 +83,7 @@ def list_gsc_sites() -> str:
 
 
 @mcp.tool()
-def get_search_analytics(
+def gsc_search_analytics(
     site_url: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -123,7 +123,7 @@ def get_search_analytics(
 
 
 @mcp.tool()
-def get_top_pages(
+def gsc_top_pages(
     site_url: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -154,7 +154,7 @@ def get_top_pages(
 
 
 @mcp.tool()
-def get_gsc_keywords(
+def gsc_top_keywords(
     site_url: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -187,7 +187,7 @@ def get_gsc_keywords(
 
 
 @mcp.tool()
-def get_gsc_country_breakdown(
+def gsc_country_breakdown(
     site_url: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -218,7 +218,7 @@ def get_gsc_country_breakdown(
 
 
 @mcp.tool()
-def get_gsc_device_breakdown(
+def gsc_device_breakdown(
     site_url: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -247,7 +247,7 @@ def get_gsc_device_breakdown(
 
 
 @mcp.tool()
-def get_gsc_page_keywords(
+def gsc_page_keywords(
     page_url: str,
     site_url: str = "",
     start_date: str = "",
@@ -306,7 +306,7 @@ def gsc_inspect_url(url: str, site_url: str = "") -> str:
 
 
 @mcp.tool()
-def gsc_list_sitemaps(site_url: str = "") -> str:
+def gsc_sitemaps(site_url: str = "") -> str:
     """List all sitemaps submitted to Google Search Console for this site.
 
     Args:
@@ -386,7 +386,7 @@ def gsc_delete_sitemap(sitemap_url: str, site_url: str = "") -> str:
 
 
 @mcp.tool()
-def gsc_get_date_trend(site_url: str = "", start_date: str = "", end_date: str = "") -> str:
+def gsc_date_trend(site_url: str = "", start_date: str = "", end_date: str = "") -> str:
     """Get day-by-day clicks and impressions trend data from Google Search Console.
 
     Args:

@@ -30,7 +30,10 @@ def _cfg():
 
 
 def _base_url(request: Request) -> str:
-    """Derive base URL from request, respecting Vercel/proxy forwarded headers."""
+    """Return BASE_URL env var if set, otherwise derive from request headers."""
+    base = os.environ.get("BASE_URL", "").rstrip("/")
+    if base:
+        return base
     proto = request.headers.get("x-forwarded-proto", request.url.scheme).split(",")[0].strip()
     host = request.headers.get("x-forwarded-host", request.url.netloc).split(",")[0].strip()
     return f"{proto}://{host}"
@@ -41,13 +44,6 @@ SCOPES = ",".join([
     "business_management",
     "pages_show_list",
     "pages_read_engagement",
-    "pages_manage_posts",
-    "pages_manage_engagement",
-    "pages_messaging",
-    "read_insights",
-    "instagram_basic",
-    "instagram_manage_insights",
-    "instagram_content_publish",
     "public_profile",
 ])
 
@@ -160,7 +156,7 @@ async def meta_callback(request: Request, code: str = "", state: str = "", error
 
     if return_to:
         separator = "&" if "?" in return_to else "?"
-        return RedirectResponse(f"{return_to}{separator}meta_ok=1")
+        return RedirectResponse(f"{return_to}{separator}meta_ok=1&user_id={user_id_final}")
     return RedirectResponse(f"/onboard?meta_ok=1&user_id={user_id_final}")
 
 
@@ -176,13 +172,14 @@ async def meta_refresh(user_id: str):
         if not current_token:
             return {"error": "No Meta token stored for this user"}
 
+        app_id, app_secret = _cfg()
         async with httpx.AsyncClient() as client:
             ll_resp = await client.get(
                 f"{GRAPH_BASE}/oauth/access_token",
                 params={
                     "grant_type": "fb_exchange_token",
-                    "client_id": META_APP_ID,
-                    "client_secret": META_APP_SECRET,
+                    "client_id": app_id,
+                    "client_secret": app_secret,
                     "fb_exchange_token": current_token,
                 },
             )

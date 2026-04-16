@@ -42,15 +42,13 @@ def _get_client(customer_id: str = ""):
         "refresh_token":   refresh_token,
         "use_proto_plus":  True,
     }
-    lcid = GOOGLE_ADS_LOGIN_CUSTOMER_ID.replace("-", "")
-    if lcid:
-        config["login_customer_id"] = lcid
+    # Do NOT inject a global login_customer_id — each user accesses their own accounts.
+    # login_customer_id is only needed when acting as a manager on a client account;
+    # forcing our agency MCC causes 403s for users whose accounts it doesn't manage.
 
     cid = customer_id.strip().replace("-", "") if customer_id else ""
     if not cid:
-        cid = os.environ.get("GOOGLE_ADS_CUSTOMER_ID", "").replace("-", "")
-    if not cid:
-        raise RuntimeError("No customer_id provided. Call gads_list_customers first to find your account IDs.")
+        raise RuntimeError("No customer_id provided. Call google_ads_list_customers first to find your account IDs.")
 
     return GoogleAdsClient.load_from_dict(config), cid
 
@@ -86,7 +84,7 @@ def _date_range(start_date: str, end_date: str, default_days: int = 28):
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def gads_list_customers() -> str:
+def google_ads_list_customers() -> str:
     """List all Google Ads customer accounts accessible to the authenticated user."""
     user = current_user_ctx.get(None)
     if user is None:
@@ -101,9 +99,6 @@ def gads_list_customers() -> str:
         "refresh_token":   refresh_token,
         "use_proto_plus":  True,
     }
-    lcid = GOOGLE_ADS_LOGIN_CUSTOMER_ID.replace("-", "")
-    if lcid:
-        config["login_customer_id"] = lcid
     try:
         client = GoogleAdsClient.load_from_dict(config)
         customer_service = client.get_service("CustomerService")
@@ -116,7 +111,7 @@ def gads_list_customers() -> str:
 
 
 @mcp.tool()
-def gads_get_account_info(customer_id: str = "") -> str:
+def google_ads_get_account_info(customer_id: str = "") -> str:
     """Get basic information about a Google Ads account: name, currency, timezone, status.
 
     Args:
@@ -140,7 +135,7 @@ def gads_get_account_info(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_account_overview(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
+def google_ads_account_overview(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
     """Get high-level account metrics: total spend, impressions, clicks, conversions, CTR, avg CPC, ROAS.
 
     Args:
@@ -174,7 +169,7 @@ def gads_account_overview(start_date: str = "", end_date: str = "", customer_id:
 
 
 @mcp.tool()
-def gads_campaign_performance(start_date: str = "", end_date: str = "", customer_id: str = "", status_filter: str = "ENABLED", row_limit: int = 25) -> str:
+def google_ads_campaign_performance(start_date: str = "", end_date: str = "", customer_id: str = "", status_filter: str = "ENABLED", row_limit: int = 25) -> str:
     """Get Google Ads campaign-level performance: spend, impressions, clicks, conversions, CTR per campaign.
 
     Args:
@@ -212,7 +207,7 @@ def gads_campaign_performance(start_date: str = "", end_date: str = "", customer
 
 
 @mcp.tool()
-def gads_adgroup_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 25) -> str:
+def google_ads_adgroup_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads ad group performance: spend, clicks, conversions for each ad group.
 
     Args:
@@ -249,7 +244,7 @@ def gads_adgroup_performance(start_date: str = "", end_date: str = "", customer_
 
 
 @mcp.tool()
-def gads_keyword_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 50, sort_by: str = "cost") -> str:
+def google_ads_keyword_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 50, sort_by: str = "cost") -> str:
     """Get Google Ads keyword-level performance: clicks, impressions, spend, quality score, match type.
 
     Args:
@@ -293,7 +288,7 @@ def gads_keyword_performance(start_date: str = "", end_date: str = "", customer_
 
 
 @mcp.tool()
-def gads_search_terms(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 50) -> str:
+def google_ads_search_terms(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 50) -> str:
     """Get Google Ads search terms report — the actual queries that triggered ads.
 
     Args:
@@ -331,7 +326,7 @@ def gads_search_terms(start_date: str = "", end_date: str = "", customer_id: str
 
 
 @mcp.tool()
-def gads_ad_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 25) -> str:
+def google_ads_ad_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads individual ad performance: clicks, impressions, CTR, conversions per ad.
 
     Args:
@@ -370,7 +365,7 @@ def gads_ad_performance(start_date: str = "", end_date: str = "", customer_id: s
 
 
 @mcp.tool()
-def gads_demographic_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
+def google_ads_demographic_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
     """Get Google Ads performance broken down by age range and gender demographics.
 
     Args:
@@ -426,7 +421,7 @@ def gads_demographic_breakdown(start_date: str = "", end_date: str = "", custome
 
 
 @mcp.tool()
-def gads_geo_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_geo_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads performance broken down by geographic location.
 
     Args:
@@ -459,7 +454,7 @@ def gads_geo_performance(start_date: str = "", end_date: str = "", customer_id: 
 
 
 @mcp.tool()
-def gads_hourly_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
+def google_ads_hourly_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
     """Get Google Ads performance by hour of day to identify peak performing times.
 
     Args:
@@ -492,7 +487,7 @@ def gads_hourly_breakdown(start_date: str = "", end_date: str = "", customer_id:
 
 
 @mcp.tool()
-def gads_device_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
+def google_ads_device_breakdown(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
     """Get Google Ads performance broken down by device type: desktop, mobile, tablet.
 
     Args:
@@ -524,7 +519,7 @@ def gads_device_breakdown(start_date: str = "", end_date: str = "", customer_id:
 
 
 @mcp.tool()
-def gads_shopping_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_shopping_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Shopping campaign performance by product.
 
     Args:
@@ -561,7 +556,7 @@ def gads_shopping_performance(start_date: str = "", end_date: str = "", customer
 
 
 @mcp.tool()
-def gads_display_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_display_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Display Network campaign performance.
 
     Args:
@@ -596,7 +591,7 @@ def gads_display_performance(start_date: str = "", end_date: str = "", customer_
 
 
 @mcp.tool()
-def gads_video_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_video_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Video (YouTube) campaign performance: views, view rate, CPV, conversions.
 
     Args:
@@ -630,7 +625,7 @@ def gads_video_performance(start_date: str = "", end_date: str = "", customer_id
 
 
 @mcp.tool()
-def gads_landing_page_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_landing_page_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads landing page performance: clicks, conversions, mobile-friendliness, speed score.
 
     Args:
@@ -665,7 +660,7 @@ def gads_landing_page_performance(start_date: str = "", end_date: str = "", cust
 
 
 @mcp.tool()
-def gads_audience_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_audience_performance(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads performance for each audience segment or user list.
 
     Args:
@@ -697,7 +692,7 @@ def gads_audience_performance(start_date: str = "", end_date: str = "", customer
 
 
 @mcp.tool()
-def gads_conversion_actions(customer_id: str = "") -> str:
+def google_ads_conversion_actions(customer_id: str = "") -> str:
     """List all conversion actions configured in the Google Ads account.
 
     Args:
@@ -723,7 +718,7 @@ def gads_conversion_actions(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_budget_pacing(customer_id: str = "") -> str:
+def google_ads_budget_pacing(customer_id: str = "") -> str:
     """Get budget pacing for all active campaigns — daily budget, amount spent, and percentage used.
 
     Args:
@@ -749,7 +744,7 @@ def gads_budget_pacing(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_auction_insights(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
+def google_ads_auction_insights(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
     """Get Google Ads auction insights: impression share, overlap rate, outranking share vs competitors.
 
     Args:
@@ -787,7 +782,7 @@ def gads_auction_insights(start_date: str = "", end_date: str = "", customer_id:
 
 
 @mcp.tool()
-def gads_change_history(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_change_history(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get recent change history in the Google Ads account: what was changed, when, and by whom.
 
     Args:
@@ -824,7 +819,7 @@ def gads_change_history(start_date: str = "", end_date: str = "", customer_id: s
 
 
 @mcp.tool()
-def gads_quality_score(customer_id: str = "", campaign_id: str = "", row_limit: int = 50) -> str:
+def google_ads_quality_score(customer_id: str = "", campaign_id: str = "", row_limit: int = 50) -> str:
     """Get quality scores for all keywords: overall score, landing page experience, expected CTR, ad relevance.
 
     Args:
@@ -862,7 +857,7 @@ def gads_quality_score(customer_id: str = "", campaign_id: str = "", row_limit: 
 
 
 @mcp.tool()
-def gads_call_metrics(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
+def google_ads_call_metrics(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
     """Get Google Ads call extension metrics: calls, call conversions, average call duration.
 
     Args:
@@ -894,7 +889,7 @@ def gads_call_metrics(start_date: str = "", end_date: str = "", customer_id: str
 
 
 @mcp.tool()
-def gads_extension_performance(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
+def google_ads_extension_performance(start_date: str = "", end_date: str = "", customer_id: str = "") -> str:
     """Get Google Ads ad extension performance: sitelinks, callouts, structured snippets.
 
     Args:
@@ -924,7 +919,7 @@ def gads_extension_performance(start_date: str = "", end_date: str = "", custome
 
 
 @mcp.tool()
-def gads_recommendations(customer_id: str = "") -> str:
+def google_ads_recommendations(customer_id: str = "") -> str:
     """Get Google Ads optimization recommendations for the account.
 
     Args:
@@ -951,7 +946,7 @@ def gads_recommendations(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_asset_report(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
+def google_ads_asset_report(start_date: str = "", end_date: str = "", customer_id: str = "", row_limit: int = 25) -> str:
     """Get Google Ads asset performance: clicks, impressions, performance rating for headlines/descriptions.
 
     Args:
@@ -985,7 +980,7 @@ def gads_asset_report(start_date: str = "", end_date: str = "", customer_id: str
 
 
 @mcp.tool()
-def gads_list_labels(customer_id: str = "") -> str:
+def google_ads_list_labels(customer_id: str = "") -> str:
     """List all labels defined in the Google Ads account.
 
     Args:
@@ -1009,7 +1004,7 @@ def gads_list_labels(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_get_asset_group_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
+def google_ads_get_asset_group_performance(start_date: str = "", end_date: str = "", customer_id: str = "", campaign_id: str = "") -> str:
     """Get performance for Performance Max asset groups.
 
     Args:
@@ -1046,7 +1041,7 @@ def gads_get_asset_group_performance(start_date: str = "", end_date: str = "", c
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def gads_create_budget(name: str, amount_per_day: float, delivery_method: str = "STANDARD", customer_id: str = "") -> str:
+def google_ads_create_budget(name: str, amount_per_day: float, delivery_method: str = "STANDARD", customer_id: str = "") -> str:
     """Create a new shared campaign budget in Google Ads.
 
     Args:
@@ -1055,7 +1050,7 @@ def gads_create_budget(name: str, amount_per_day: float, delivery_method: str = 
         delivery_method: STANDARD or ACCELERATED. Default STANDARD.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_budget"):
+    if err := require_editor("google_ads_create_budget"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1072,7 +1067,7 @@ def gads_create_budget(name: str, amount_per_day: float, delivery_method: str = 
 
 
 @mcp.tool()
-def gads_create_campaign(name: str, budget_id: str, advertising_channel_type: str = "SEARCH", status: str = "PAUSED", bidding_strategy: str = "MANUAL_CPC", customer_id: str = "") -> str:
+def google_ads_create_campaign(name: str, budget_id: str, advertising_channel_type: str = "SEARCH", status: str = "PAUSED", bidding_strategy: str = "MANUAL_CPC", customer_id: str = "") -> str:
     """Create a new Google Ads campaign.
 
     Args:
@@ -1083,7 +1078,7 @@ def gads_create_campaign(name: str, budget_id: str, advertising_channel_type: st
         bidding_strategy: MANUAL_CPC, TARGET_CPA, TARGET_ROAS, or MAXIMIZE_CONVERSIONS. Default MANUAL_CPC.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_campaign"):
+    if err := require_editor("google_ads_create_campaign"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1110,7 +1105,7 @@ def gads_create_campaign(name: str, budget_id: str, advertising_channel_type: st
 
 
 @mcp.tool()
-def gads_create_adgroup(name: str, campaign_id: str, cpc_bid_micros: int = 1000000, status: str = "PAUSED", customer_id: str = "") -> str:
+def google_ads_create_adgroup(name: str, campaign_id: str, cpc_bid_micros: int = 1000000, status: str = "PAUSED", customer_id: str = "") -> str:
     """Create a new ad group within a Google Ads campaign.
 
     Args:
@@ -1120,7 +1115,7 @@ def gads_create_adgroup(name: str, campaign_id: str, cpc_bid_micros: int = 10000
         status: ENABLED or PAUSED. Default PAUSED.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_adgroup"):
+    if err := require_editor("google_ads_create_adgroup"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1139,7 +1134,7 @@ def gads_create_adgroup(name: str, campaign_id: str, cpc_bid_micros: int = 10000
 
 
 @mcp.tool()
-def gads_add_keywords(adgroup_id: str, keywords_json: str, campaign_id: str, customer_id: str = "") -> str:
+def google_ads_add_keywords(adgroup_id: str, keywords_json: str, campaign_id: str, customer_id: str = "") -> str:
     """Add keywords to a Google Ads ad group.
 
     Args:
@@ -1148,7 +1143,7 @@ def gads_add_keywords(adgroup_id: str, keywords_json: str, campaign_id: str, cus
         campaign_id: Parent campaign ID (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_add_keywords"):
+    if err := require_editor("google_ads_add_keywords"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1173,7 +1168,7 @@ def gads_add_keywords(adgroup_id: str, keywords_json: str, campaign_id: str, cus
 
 
 @mcp.tool()
-def gads_add_negative_keywords(campaign_id: str, keywords_json: str, customer_id: str = "") -> str:
+def google_ads_add_negative_keywords(campaign_id: str, keywords_json: str, customer_id: str = "") -> str:
     """Add negative keywords at the campaign level.
 
     Args:
@@ -1181,7 +1176,7 @@ def gads_add_negative_keywords(campaign_id: str, keywords_json: str, customer_id
         keywords_json: JSON array, e.g. '[{"text": "free", "match_type": "BROAD"}]' (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_add_negative_keywords"):
+    if err := require_editor("google_ads_add_negative_keywords"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1204,7 +1199,7 @@ def gads_add_negative_keywords(campaign_id: str, keywords_json: str, customer_id
 
 
 @mcp.tool()
-def gads_update_campaign_status(campaign_id: str, status: str, customer_id: str = "") -> str:
+def google_ads_update_campaign_status(campaign_id: str, status: str, customer_id: str = "") -> str:
     """Update the status of a Google Ads campaign: enable, pause, or remove it.
 
     Args:
@@ -1212,7 +1207,7 @@ def gads_update_campaign_status(campaign_id: str, status: str, customer_id: str 
         status: New status: ENABLED, PAUSED, or REMOVED (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_campaign_status"):
+    if err := require_editor("google_ads_update_campaign_status"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1230,7 +1225,7 @@ def gads_update_campaign_status(campaign_id: str, status: str, customer_id: str 
 
 
 @mcp.tool()
-def gads_update_adgroup_status(adgroup_id: str, campaign_id: str, status: str, customer_id: str = "") -> str:
+def google_ads_update_adgroup_status(adgroup_id: str, campaign_id: str, status: str, customer_id: str = "") -> str:
     """Update the status of a Google Ads ad group.
 
     Args:
@@ -1239,7 +1234,7 @@ def gads_update_adgroup_status(adgroup_id: str, campaign_id: str, status: str, c
         status: New status: ENABLED, PAUSED, or REMOVED (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_adgroup_status"):
+    if err := require_editor("google_ads_update_adgroup_status"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1257,7 +1252,7 @@ def gads_update_adgroup_status(adgroup_id: str, campaign_id: str, status: str, c
 
 
 @mcp.tool()
-def gads_update_keyword_status(adgroup_id: str, criterion_id: str, status: str, customer_id: str = "") -> str:
+def google_ads_update_keyword_status(adgroup_id: str, criterion_id: str, status: str, customer_id: str = "") -> str:
     """Update the status of a keyword in a Google Ads ad group.
 
     Args:
@@ -1266,7 +1261,7 @@ def gads_update_keyword_status(adgroup_id: str, criterion_id: str, status: str, 
         status: New status: ENABLED, PAUSED, or REMOVED (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_keyword_status"):
+    if err := require_editor("google_ads_update_keyword_status"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1284,7 +1279,7 @@ def gads_update_keyword_status(adgroup_id: str, criterion_id: str, status: str, 
 
 
 @mcp.tool()
-def gads_update_keyword_bid(adgroup_id: str, criterion_id: str, cpc_bid_micros: int, customer_id: str = "") -> str:
+def google_ads_update_keyword_bid(adgroup_id: str, criterion_id: str, cpc_bid_micros: int, customer_id: str = "") -> str:
     """Update the CPC bid for a specific keyword in Google Ads.
 
     Args:
@@ -1293,7 +1288,7 @@ def gads_update_keyword_bid(adgroup_id: str, criterion_id: str, cpc_bid_micros: 
         cpc_bid_micros: New CPC bid in micros, e.g. 2000000 for $2.00 (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_keyword_bid"):
+    if err := require_editor("google_ads_update_keyword_bid"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1311,7 +1306,7 @@ def gads_update_keyword_bid(adgroup_id: str, criterion_id: str, cpc_bid_micros: 
 
 
 @mcp.tool()
-def gads_update_campaign_budget(budget_id: str, amount_per_day: float, customer_id: str = "") -> str:
+def google_ads_update_campaign_budget(budget_id: str, amount_per_day: float, customer_id: str = "") -> str:
     """Update the daily budget amount for a Google Ads campaign budget.
 
     Args:
@@ -1319,7 +1314,7 @@ def gads_update_campaign_budget(budget_id: str, amount_per_day: float, customer_
         amount_per_day: New daily budget in the account's currency, e.g. 100.00 for $100 (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_campaign_budget"):
+    if err := require_editor("google_ads_update_campaign_budget"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1337,7 +1332,7 @@ def gads_update_campaign_budget(budget_id: str, amount_per_day: float, customer_
 
 
 @mcp.tool()
-def gads_create_responsive_search_ad(adgroup_id: str, campaign_id: str, final_url: str, headlines: list, descriptions: list, path1: str = "", path2: str = "", status: str = "PAUSED", customer_id: str = "") -> str:
+def google_ads_create_responsive_search_ad(adgroup_id: str, campaign_id: str, final_url: str, headlines: list, descriptions: list, path1: str = "", path2: str = "", status: str = "PAUSED", customer_id: str = "") -> str:
     """Create a Responsive Search Ad (RSA) in a Google Ads ad group.
 
     Args:
@@ -1351,7 +1346,7 @@ def gads_create_responsive_search_ad(adgroup_id: str, campaign_id: str, final_ur
         status: ENABLED or PAUSED. Default PAUSED.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_responsive_search_ad"):
+    if err := require_editor("google_ads_create_responsive_search_ad"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1382,13 +1377,13 @@ def gads_create_responsive_search_ad(adgroup_id: str, campaign_id: str, final_ur
 
 
 @mcp.tool()
-def gads_pause_all_campaigns(customer_id: str = "") -> str:
+def google_ads_pause_all_campaigns(customer_id: str = "") -> str:
     """Pause ALL active campaigns in the Google Ads account. Use with caution.
 
     Args:
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_pause_all_campaigns"):
+    if err := require_editor("google_ads_pause_all_campaigns"):
         return err
     try:
         rows = _search("""
@@ -1413,14 +1408,14 @@ def gads_pause_all_campaigns(customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_enable_campaign(campaign_id: str, customer_id: str = "") -> str:
+def google_ads_enable_campaign(campaign_id: str, customer_id: str = "") -> str:
     """Enable (un-pause) a specific Google Ads campaign.
 
     Args:
         campaign_id: Campaign ID to enable (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_enable_campaign"):
+    if err := require_editor("google_ads_enable_campaign"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1438,14 +1433,14 @@ def gads_enable_campaign(campaign_id: str, customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_apply_recommendation(recommendation_resource_name: str, customer_id: str = "") -> str:
+def google_ads_apply_recommendation(recommendation_resource_name: str, customer_id: str = "") -> str:
     """Apply a Google Ads optimization recommendation.
 
     Args:
         recommendation_resource_name: Full resource name of the recommendation (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_apply_recommendation"):
+    if err := require_editor("google_ads_apply_recommendation"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1459,14 +1454,14 @@ def gads_apply_recommendation(recommendation_resource_name: str, customer_id: st
 
 
 @mcp.tool()
-def gads_dismiss_recommendation(recommendation_resource_name: str, customer_id: str = "") -> str:
+def google_ads_dismiss_recommendation(recommendation_resource_name: str, customer_id: str = "") -> str:
     """Dismiss a Google Ads optimization recommendation.
 
     Args:
         recommendation_resource_name: Full resource name of the recommendation (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_dismiss_recommendation"):
+    if err := require_editor("google_ads_dismiss_recommendation"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1481,7 +1476,7 @@ def gads_dismiss_recommendation(recommendation_resource_name: str, customer_id: 
 
 
 @mcp.tool()
-def gads_upload_image_asset(image_url: str, asset_name: str, customer_id: str = "") -> str:
+def google_ads_upload_image_asset(image_url: str, asset_name: str, customer_id: str = "") -> str:
     """Upload a public image URL as a Google Ads Image Asset.
 
     Args:
@@ -1489,7 +1484,7 @@ def gads_upload_image_asset(image_url: str, asset_name: str, customer_id: str = 
         asset_name: Display name for the asset (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_upload_image_asset"):
+    if err := require_editor("google_ads_upload_image_asset"):
         return err
     try:
         req = _urllib_request.Request(image_url, headers={"User-Agent": "Mozilla/5.0"})
@@ -1509,7 +1504,7 @@ def gads_upload_image_asset(image_url: str, asset_name: str, customer_id: str = 
 
 
 @mcp.tool()
-def gads_create_conversion_action(name: str, type: str, category: str, counting_type: str = "ONE_PER_CLICK", value: float = 0.0, currency_code: str = "USD", customer_id: str = "") -> str:
+def google_ads_create_conversion_action(name: str, type: str, category: str, counting_type: str = "ONE_PER_CLICK", value: float = 0.0, currency_code: str = "USD", customer_id: str = "") -> str:
     """Create a new conversion action in Google Ads.
 
     Args:
@@ -1521,7 +1516,7 @@ def gads_create_conversion_action(name: str, type: str, category: str, counting_
         currency_code: Currency code, e.g. USD. Default USD.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_conversion_action"):
+    if err := require_editor("google_ads_create_conversion_action"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1541,7 +1536,7 @@ def gads_create_conversion_action(name: str, type: str, category: str, counting_
 
 
 @mcp.tool()
-def gads_update_conversion_action(conversion_action_id: str, status: str = "", value: float = -1, counting_type: str = "", attribution_model: str = "", customer_id: str = "") -> str:
+def google_ads_update_conversion_action(conversion_action_id: str, status: str = "", value: float = -1, counting_type: str = "", attribution_model: str = "", customer_id: str = "") -> str:
     """Update an existing conversion action in Google Ads.
 
     Args:
@@ -1552,7 +1547,7 @@ def gads_update_conversion_action(conversion_action_id: str, status: str = "", v
         attribution_model: Attribution model name. Leave blank to keep unchanged.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_update_conversion_action"):
+    if err := require_editor("google_ads_update_conversion_action"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1581,7 +1576,7 @@ def gads_update_conversion_action(conversion_action_id: str, status: str = "", v
 
 
 @mcp.tool()
-def gads_create_sitelink_asset(link_text: str, description_1: str, description_2: str, final_url: str, campaign_id: str = "", customer_id: str = "") -> str:
+def google_ads_create_sitelink_asset(link_text: str, description_1: str, description_2: str, final_url: str, campaign_id: str = "", customer_id: str = "") -> str:
     """Create a sitelink asset in Google Ads and optionally link it to a campaign.
 
     Args:
@@ -1592,7 +1587,7 @@ def gads_create_sitelink_asset(link_text: str, description_1: str, description_2
         campaign_id: Campaign to link the sitelink to. Leave blank for account-level.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_sitelink_asset"):
+    if err := require_editor("google_ads_create_sitelink_asset"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1622,7 +1617,7 @@ def gads_create_sitelink_asset(link_text: str, description_1: str, description_2
 
 
 @mcp.tool()
-def gads_create_callout_asset(callout_text: str, campaign_id: str = "", customer_id: str = "") -> str:
+def google_ads_create_callout_asset(callout_text: str, campaign_id: str = "", customer_id: str = "") -> str:
     """Create a callout asset and optionally link it to a specific campaign.
 
     Args:
@@ -1630,7 +1625,7 @@ def gads_create_callout_asset(callout_text: str, campaign_id: str = "", customer
         campaign_id: Campaign to link the callout to. Leave blank for account-level.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_callout_asset"):
+    if err := require_editor("google_ads_create_callout_asset"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1656,7 +1651,7 @@ def gads_create_callout_asset(callout_text: str, campaign_id: str = "", customer
 
 
 @mcp.tool()
-def gads_create_video_ad(adgroup_id: str, youtube_video_id: str, format: str, final_url: str, headline: str = "", description: str = "", companion_banner_asset_id: str = "", customer_id: str = "") -> str:
+def google_ads_create_video_ad(adgroup_id: str, youtube_video_id: str, format: str, final_url: str, headline: str = "", description: str = "", companion_banner_asset_id: str = "", customer_id: str = "") -> str:
     """Create a video ad in an existing ad group linked to a YouTube video.
 
     Args:
@@ -1669,7 +1664,7 @@ def gads_create_video_ad(adgroup_id: str, youtube_video_id: str, format: str, fi
         companion_banner_asset_id: Asset ID of the companion banner for IN_STREAM.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_video_ad"):
+    if err := require_editor("google_ads_create_video_ad"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1714,7 +1709,7 @@ def gads_create_video_ad(adgroup_id: str, youtube_video_id: str, format: str, fi
 
 
 @mcp.tool()
-def gads_bulk_create_keywords(keywords_json: str, customer_id: str = "") -> str:
+def google_ads_bulk_create_keywords(keywords_json: str, customer_id: str = "") -> str:
     """Bulk create keywords across multiple ad groups in a single API call.
 
     Args:
@@ -1722,7 +1717,7 @@ def gads_bulk_create_keywords(keywords_json: str, customer_id: str = "") -> str:
             Example: '[{"adgroup_id": "123", "text": "shoes", "match_type": "BROAD", "cpc_bid_micros": 500000}]' (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_bulk_create_keywords"):
+    if err := require_editor("google_ads_bulk_create_keywords"):
         return err
     try:
         keywords = json.loads(keywords_json)
@@ -1746,7 +1741,7 @@ def gads_bulk_create_keywords(keywords_json: str, customer_id: str = "") -> str:
 
 
 @mcp.tool()
-def gads_create_label(name: str, color: str = "#000000", description: str = "", customer_id: str = "") -> str:
+def google_ads_create_label(name: str, color: str = "#000000", description: str = "", customer_id: str = "") -> str:
     """Create a new label in Google Ads for organizing campaigns, ad groups, ads or keywords.
 
     Args:
@@ -1755,7 +1750,7 @@ def gads_create_label(name: str, color: str = "#000000", description: str = "", 
         description: Optional label description.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_label"):
+    if err := require_editor("google_ads_create_label"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1773,7 +1768,7 @@ def gads_create_label(name: str, color: str = "#000000", description: str = "", 
 
 
 @mcp.tool()
-def gads_apply_label(label_id: str, entity_type: str, entity_id: str, customer_id: str = "") -> str:
+def google_ads_apply_label(label_id: str, entity_type: str, entity_id: str, customer_id: str = "") -> str:
     """Apply an existing label to a campaign, ad group, ad, or keyword.
 
     Args:
@@ -1782,7 +1777,7 @@ def gads_apply_label(label_id: str, entity_type: str, entity_id: str, customer_i
         entity_id: The ID of the entity to label (required).
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_apply_label"):
+    if err := require_editor("google_ads_apply_label"):
         return err
     try:
         client, cid = _get_client(customer_id)
@@ -1812,7 +1807,7 @@ def gads_apply_label(label_id: str, entity_type: str, entity_id: str, customer_i
 
 
 @mcp.tool()
-def gads_create_responsive_display_ad(adgroup_id: str, headlines: str, descriptions: str, business_name: str, final_url: str, marketing_image_asset_id: str, logo_asset_id: str = "", customer_id: str = "") -> str:
+def google_ads_create_responsive_display_ad(adgroup_id: str, headlines: str, descriptions: str, business_name: str, final_url: str, marketing_image_asset_id: str, logo_asset_id: str = "", customer_id: str = "") -> str:
     """Create a Responsive Display Ad in an existing ad group.
 
     Args:
@@ -1821,11 +1816,11 @@ def gads_create_responsive_display_ad(adgroup_id: str, headlines: str, descripti
         descriptions: JSON array of description strings (required).
         business_name: Business name shown in the ad, max 25 chars (required).
         final_url: Landing page URL (required).
-        marketing_image_asset_id: Image asset ID from gads_upload_image_asset (required).
+        marketing_image_asset_id: Image asset ID from google_ads_upload_image_asset (required).
         logo_asset_id: Optional logo asset ID.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_responsive_display_ad"):
+    if err := require_editor("google_ads_create_responsive_display_ad"):
         return err
     try:
         headlines_list = json.loads(headlines)
@@ -1863,7 +1858,7 @@ def gads_create_responsive_display_ad(adgroup_id: str, headlines: str, descripti
 
 
 @mcp.tool()
-def gads_create_asset_group(campaign_id: str, name: str, final_url: str, business_name: str, headlines: str, long_headlines: str, descriptions: str, image_asset_ids: str, logo_asset_ids: str = "[]", youtube_video_ids: str = "[]", customer_id: str = "") -> str:
+def google_ads_create_asset_group(campaign_id: str, name: str, final_url: str, business_name: str, headlines: str, long_headlines: str, descriptions: str, image_asset_ids: str, logo_asset_ids: str = "[]", youtube_video_ids: str = "[]", customer_id: str = "") -> str:
     """Create an Asset Group inside an existing Performance Max campaign.
 
     Args:
@@ -1879,7 +1874,7 @@ def gads_create_asset_group(campaign_id: str, name: str, final_url: str, busines
         youtube_video_ids: JSON array of YouTube video IDs.
         customer_id: Google Ads customer ID. Leave blank to use default.
     """
-    if err := require_editor("gads_create_asset_group"):
+    if err := require_editor("google_ads_create_asset_group"):
         return err
     try:
         h_list = json.loads(headlines)

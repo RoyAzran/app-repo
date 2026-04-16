@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-THYFH2QD4D"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-THYFH2QD4D');
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agency MCP — Onboarding</title>
+  <meta name="robots" content="noindex, nofollow">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #1a1a1a; }
@@ -63,15 +72,60 @@
     <a id="meta-btn" href="#" class="btn btn-meta">Connect with Meta</a>
   </div>
 
-  <!-- Step 3: JWT -->
-  <div class="card" id="jwt-card" style="display:none;">
+  <!-- Step 3: MCP Credentials -->
+  <div class="card" id="cred-card" style="display:none;">
     <h2>
       <span class="step-num">3</span>
-      Your MCP API Token
+      Your Claude.ai Connection Credentials
     </h2>
     <p style="font-size:0.88rem;color:#555;margin-bottom:14px;">
-      Copy this token. You will paste it into your MCP client configuration.<br>
-      Keep it secret — it grants access to all your connected ad accounts.
+      Use these in Claude.ai → Settings → Integrations → <strong>Add custom integration</strong>.
+    </p>
+
+    <div id="cred-loading" style="color:#888;font-size:.9rem;">Loading credentials…</div>
+
+    <div id="cred-content" style="display:none;">
+      <div class="token-box">
+        <label>MCP Server URL</label>
+        <div style="display:flex;gap:8px">
+          <input id="mcp-url" type="text" readonly style="flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:6px;font-family:monospace;font-size:.85rem;background:#f9f9f9">
+          <button class="btn copy-btn" onclick="copyField('mcp-url')">Copy</button>
+        </div>
+      </div>
+      <div class="token-box" style="margin-top:14px">
+        <label>OAuth Client ID</label>
+        <div style="display:flex;gap:8px">
+          <input id="oauth-client-id" type="text" readonly style="flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:6px;font-family:monospace;font-size:.85rem;background:#f9f9f9">
+          <button class="btn copy-btn" onclick="copyField('oauth-client-id')">Copy</button>
+        </div>
+      </div>
+      <div id="secret-section" class="token-box" style="margin-top:14px;display:none;">
+        <label>OAuth Client Secret <span style="color:#c00;font-size:.78rem">(shown once — save now!)</span></label>
+        <div style="display:flex;gap:8px">
+          <input id="oauth-client-secret" type="text" readonly style="flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:6px;font-family:monospace;font-size:.85rem;background:#fff8e1">
+          <button class="btn copy-btn" onclick="copyField('oauth-client-secret')">Copy</button>
+        </div>
+        <p class="note" style="color:#c00">⚠  This secret is shown only once. If you miss it, click <em>Rotate credentials</em> below.</p>
+      </div>
+      <div id="no-secret-msg" style="display:none;margin-top:10px;font-size:.85rem;color:#888">
+        Your client secret was already shown. Use the button below if you need a new one.
+      </div>
+      <button class="btn" style="background:#e5e7eb;color:#374151;margin-top:18px;font-size:.82rem" onclick="rotateCredentials()">↻ Rotate credentials (invalidates current connection)</button>
+    </div>
+
+    <div id="cred-no-sub" style="display:none;font-size:.9rem;color:#888">
+      Credentials are issued once your payment is confirmed. If you just subscribed, wait a moment and refresh.
+    </div>
+  </div>
+
+  <!-- Legacy JWT card kept for Claude Desktop / direct API users -->
+  <div class="card" id="jwt-card" style="display:none;">
+    <h2>
+      <span class="step-num">4</span>
+      Direct API Token (Claude Desktop)
+    </h2>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:14px;">
+      For Claude Desktop or other clients that use a raw bearer token instead of the OAuth flow.
     </p>
     <div class="token-box">
       <label>JWT Token (valid 90 days)</label>
@@ -92,11 +146,14 @@
   const userId = params.get("user_id") || localStorage.getItem("mcp_user_id") || "";
   if (userId) localStorage.setItem("mcp_user_id", userId);
 
+  let _token = params.get("token") || localStorage.getItem("mcp_token") || "";
+  if (params.get("token")) localStorage.setItem("mcp_token", params.get("token"));
+
   const googleOk = params.get("google_ok") === "1" || localStorage.getItem("google_ok") === "1";
   const metaOk   = params.get("meta_ok")   === "1" || localStorage.getItem("meta_ok")   === "1";
 
-  if (params.get("google_ok") === "1") localStorage.setItem("google_ok", "1");
-  if (params.get("meta_ok")   === "1") localStorage.setItem("meta_ok",   "1");
+  if (params.get("google_ok") === "1") { localStorage.setItem("google_ok", "1"); gtag('event','google_connect'); }
+  if (params.get("meta_ok")   === "1") { localStorage.setItem("meta_ok",   "1"); gtag('event','meta_connect'); }
 
   function setStatus(id, ok) {
     const el = document.getElementById(id);
@@ -111,7 +168,62 @@
   document.getElementById("google-btn").href = `/auth/google/start${uid}`;
   document.getElementById("meta-btn").href   = `/auth/meta/start${uid}`;
 
-  // If both connected, fetch JWT
+  // ---------------------------------------------------------------------------
+  // MCP Credentials
+  // ---------------------------------------------------------------------------
+  // Show credential card when Google is connected and we have a token
+  if (googleOk && _token) {
+    document.getElementById("cred-card").style.display = "block";
+    loadCredentials();
+  } else if (googleOk && userId) {
+    document.getElementById("cred-card").style.display = "block";
+    // Try fetching a token first
+    fetch(`/admin/users/${userId}/token`, { headers: { "X-Admin-Bootstrap": "true" } })
+      .then(r => r.json())
+      .then(d => { if (d.token) { _token = d.token; localStorage.setItem("mcp_token", d.token); loadCredentials(); } });
+  }
+
+  function loadCredentials() {
+    fetch("/user/credentials", { headers: { Authorization: `Bearer ${_token}` } })
+      .then(r => r.json())
+      .then(renderCredentials)
+      .catch(() => showCredError());
+  }
+
+  function renderCredentials(data) {
+    document.getElementById("cred-loading").style.display = "none";
+    if (!data.has_credential) {
+      document.getElementById("cred-no-sub").style.display = "block";
+      return;
+    }
+    // GA4: credentials visible = user is fully activated
+    gtag('event','mcp_credential_issued');
+    document.getElementById("cred-content").style.display = "block";
+    document.getElementById("mcp-url").value = data.server_url || location.origin + "/mcp";
+    document.getElementById("oauth-client-id").value = data.client_id || "";
+    document.getElementById("no-secret-msg").style.display = "block";
+  }
+
+  function showCredError() {
+    document.getElementById("cred-loading").textContent = "Could not load credentials. Please refresh.";
+  }
+
+  function rotateCredentials() {
+    if (!confirm("This will disconnect your current Claude session. Continue?")) return;
+    fetch("/user/credentials/rotate", { method: "POST", headers: { Authorization: `Bearer ${_token}` } })
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById("oauth-client-id").value = data.client_id || "";
+        document.getElementById("oauth-client-secret").value = data.client_secret || "";
+        document.getElementById("secret-section").style.display = "block";
+        document.getElementById("no-secret-msg").style.display = "none";
+      })
+      .catch(() => alert("Rotate failed. Please refresh and try again."));
+  }
+
+  // ---------------------------------------------------------------------------
+  // Legacy JWT (Claude Desktop)
+  // ---------------------------------------------------------------------------
   if (googleOk && metaOk && userId) {
     fetch(`/admin/users/${userId}/token`, { headers: { "X-Admin-Bootstrap": "true" } })
       .then(r => r.json())
@@ -123,7 +235,7 @@
           const serverUrl = location.origin;
           const snippet = JSON.stringify({
             mcpServers: {
-              "agency-tools": {
+              "marketing-mcp": {
                 url: `${serverUrl}/mcp`,
                 headers: { Authorization: `Bearer ${data.token}` }
               }
@@ -138,6 +250,14 @@
     const ta = document.getElementById("jwt-token");
     ta.select();
     navigator.clipboard.writeText(ta.value).then(() => alert("Token copied!"));
+  }
+
+  function copyField(id) {
+    const el = document.getElementById(id);
+    navigator.clipboard.writeText(el.value).then(() => {
+      const label = el.closest('.token-box')?.querySelector('label');
+      if (label) { const orig = label.textContent; label.textContent = "Copied!"; setTimeout(() => label.textContent = orig, 1500); }
+    });
   }
 </script>
 </body>

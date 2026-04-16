@@ -2,43 +2,43 @@
 """
 Meta Ads MCP Server — 58 tools
 
-Analytics (read): get_meta_overview, get_meta_campaigns, get_meta_adsets, get_meta_daily_trend,
-  get_meta_ads, get_meta_demographics, get_meta_placements, get_meta_geo,
-  get_meta_video_performance, get_meta_conversion_funnel, get_meta_frequency,
-  get_meta_hourly_trend, meta_list_ad_accounts, meta_get_audiences, meta_get_pages,
-  meta_get_pixels, meta_get_catalog, meta_get_creative_previews, meta_get_page_insights,
-  meta_get_reach_estimate, meta_get_targeting_search, meta_get_pixel_stats,
-  meta_get_custom_conversions, meta_get_ad_creatives
+Analytics (read): meta_ads_overview, meta_ads_campaigns, meta_ads_adsets, meta_ads_daily_trend,
+  meta_ads_ads, meta_ads_demographics, meta_ads_placements, meta_ads_geo,
+  meta_ads_video_performance, meta_ads_conversion_funnel, meta_ads_frequency,
+  meta_ads_hourly_trend, meta_ads_list_ad_accounts, meta_ads_audiences, meta_ads_pages,
+  meta_ads_pixels, meta_ads_catalog, meta_ads_creative_previews, meta_ads_page_insights,
+  meta_ads_reach_estimate, meta_ads_targeting_search, meta_ads_pixel_stats,
+  meta_ads_custom_conversions, meta_ads_ad_creatives
 
-Listing (no dates): meta_list_campaigns, meta_list_adsets
+Listing (no dates): meta_ads_list_campaigns, meta_ads_list_adsets
 
-Ads Management (write): meta_update_status, meta_update_budget, meta_create_campaign,
-  meta_create_adset, meta_create_ad_creative, meta_upload_ad_video, meta_create_video_ad_creative,
-  meta_create_ad,
-  meta_duplicate_campaign, meta_duplicate_adset, meta_update_adset_targeting, meta_create_audience,
-  meta_create_lookalike, meta_get_leadgen_forms
+Ads Management (write): meta_ads_update_status, meta_ads_update_budget, meta_ads_create_campaign,
+  meta_ads_create_adset, meta_ads_create_ad_creative, meta_ads_upload_ad_video, meta_ads_create_video_ad_creative,
+  meta_ads_create_ad,
+  meta_ads_duplicate_campaign, meta_ads_duplicate_adset, meta_ads_update_adset_targeting, meta_ads_create_audience,
+  meta_ads_create_lookalike, meta_ads_leadgen_forms
 
-Google Drive: google_drive_list_videos, google_drive_list_files,
-  google_drive_get_video_info, google_drive_download_file,
-  google_drive_watch_folder, google_drive_upload_video_to_meta
+Google Drive: meta_google_drive_list_videos, meta_google_drive_list_files,
+  meta_google_drive_get_video_info, meta_google_drive_download_file,
+  meta_google_drive_watch_folder, meta_google_drive_upload_video_to_meta
 
-Pages — Feed & Posts: meta_get_page_feed, meta_get_page_post, meta_create_page_post,
-  meta_update_page_post, meta_delete_page_post, meta_get_page_scheduled_posts
+Pages — Feed & Posts: meta_ads_page_feed, meta_ads_page_post, meta_ads_create_page_post,
+  meta_ads_update_page_post, meta_ads_delete_page_post, meta_ads_page_scheduled_posts
 
-Pages — Comments: meta_get_post_comments, meta_reply_to_comment, meta_hide_comment,
-  meta_delete_comment, meta_like_object, meta_get_page_post_reactions
+Pages — Comments: meta_ads_post_comments, meta_ads_reply_to_comment, meta_ads_hide_comment,
+  meta_ads_delete_comment, meta_ads_like_object, meta_ads_page_post_reactions
 
-Pages — Messaging: meta_get_page_conversations, meta_get_conversation_messages,
-  meta_reply_to_page_message
+Pages — Messaging: meta_ads_page_conversations, meta_ads_conversation_messages,
+  meta_ads_reply_to_page_message
 
-Pages — Media: meta_get_page_photos, meta_get_page_videos, meta_get_page_albums
+Pages — Media: meta_ads_page_photos, meta_ads_page_videos, meta_ads_page_albums
 
-Pages — Events: meta_get_page_events, meta_create_page_event
+Pages — Events: meta_ads_page_events, meta_ads_create_page_event
 
-Pages — Management: meta_get_page_info, meta_update_page_info, meta_get_page_reviews,
-  meta_get_page_mentions, meta_get_page_roles, meta_add_page_role, meta_remove_page_role,
-  meta_get_page_blocked_users, meta_block_page_user, meta_unblock_page_user,
-  meta_get_instagram_account, meta_get_instagram_media, meta_create_instagram_post
+Pages — Management: meta_ads_page_info, meta_ads_update_page_info, meta_ads_page_reviews,
+  meta_ads_page_mentions, meta_ads_page_roles, meta_ads_add_page_role, meta_ads_remove_page_role,
+  meta_ads_page_blocked_users, meta_ads_block_page_user, meta_ads_unblock_page_user,
+  meta_ads_instagram_account, meta_ads_instagram_media, meta_ads_create_instagram_post
 
 Setup: pip install -r requirements.txt
        cp .env.example .env  # then fill in credentials
@@ -86,7 +86,7 @@ def _account_id() -> str:
 
 
 
-_MISSING_ACCOUNT_ERROR = {"error": "account_id is required. Call meta_list_ad_accounts first to find your account IDs, then pass account_id to this tool."}
+_MISSING_ACCOUNT_ERROR = {"error": "account_id is required. Call meta_ads_list_ad_accounts first to find your account IDs, then pass account_id to this tool."}
 
 
 def _get(path: str, params: Optional[dict] = None) -> dict:
@@ -135,7 +135,7 @@ INSIGHTS_FIELDS = "campaign_name,adset_name,ad_name,impressions,clicks,spend,ctr
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def get_meta_overview(
+def meta_ads_overview(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -157,7 +157,7 @@ def get_meta_overview(
 
 
 @mcp.tool()
-def get_meta_campaigns(
+def meta_ads_campaigns(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -186,7 +186,7 @@ def get_meta_campaigns(
 
 
 @mcp.tool()
-def get_meta_adsets(
+def meta_ads_adsets(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -215,7 +215,7 @@ def get_meta_adsets(
 
 
 @mcp.tool()
-def get_meta_daily_trend(
+def meta_ads_daily_trend(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -239,7 +239,7 @@ def get_meta_daily_trend(
 
 
 @mcp.tool()
-def get_meta_ads(
+def meta_ads_ads(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -268,7 +268,7 @@ def get_meta_ads(
 
 
 @mcp.tool()
-def get_meta_demographics(
+def meta_ads_demographics(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -292,7 +292,7 @@ def get_meta_demographics(
 
 
 @mcp.tool()
-def get_meta_placements(
+def meta_ads_placements(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -316,7 +316,7 @@ def get_meta_placements(
 
 
 @mcp.tool()
-def get_meta_geo(
+def meta_ads_geo(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -342,7 +342,7 @@ def get_meta_geo(
 
 
 @mcp.tool()
-def get_meta_video_performance(
+def meta_ads_video_performance(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -366,7 +366,7 @@ def get_meta_video_performance(
 
 
 @mcp.tool()
-def get_meta_conversion_funnel(
+def meta_ads_conversion_funnel(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -390,7 +390,7 @@ def get_meta_conversion_funnel(
 
 
 @mcp.tool()
-def get_meta_frequency(
+def meta_ads_frequency(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -414,7 +414,7 @@ def get_meta_frequency(
 
 
 @mcp.tool()
-def get_meta_hourly_trend(
+def meta_ads_hourly_trend(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -438,7 +438,7 @@ def get_meta_hourly_trend(
 
 
 @mcp.tool()
-def meta_list_ad_accounts(user_id: str = "me", name_filter: str = "") -> str:
+def meta_ads_list_ad_accounts(user_id: str = "me", name_filter: str = "") -> str:
     """List all Meta ad accounts the user has access to, with optional name filtering.
 
     Paginates through ALL accounts (not just the first 50). If name_filter is provided,
@@ -470,7 +470,7 @@ def meta_list_ad_accounts(user_id: str = "me", name_filter: str = "") -> str:
 
 
 @mcp.tool()
-def meta_get_audiences(account_id: str = "") -> str:
+def meta_ads_audiences(account_id: str = "") -> str:
     """List all custom audiences in the Meta ad account.
 
     Args:
@@ -481,13 +481,13 @@ def meta_get_audiences(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_get_pages() -> str:
+def meta_ads_pages() -> str:
     """List Facebook Pages managed by the authenticated user."""
     return json.dumps(_get("me/accounts", {"fields": "id,name,category,fan_count,access_token", "limit": 50}))
 
 
 @mcp.tool()
-def meta_get_pixels(account_id: str = "") -> str:
+def meta_ads_pixels(account_id: str = "") -> str:
     """List all Meta Pixels (datasets) associated with the ad account.
 
     Args:
@@ -498,7 +498,7 @@ def meta_get_pixels(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_get_catalog(account_id: str = "") -> str:
+def meta_ads_catalog(account_id: str = "") -> str:
     """List Meta product catalogs linked to the ad account.
 
     Args:
@@ -509,7 +509,7 @@ def meta_get_catalog(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_get_creative_previews(ad_id: str) -> str:
+def meta_ads_creative_previews(ad_id: str) -> str:
     """Get creative preview URLs for a specific Meta ad.
 
     Args:
@@ -519,7 +519,7 @@ def meta_get_creative_previews(ad_id: str) -> str:
 
 
 @mcp.tool()
-def meta_get_page_insights(
+def meta_ads_page_insights(
     page_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -546,7 +546,7 @@ def meta_get_page_insights(
 
 
 @mcp.tool()
-def meta_get_reach_estimate(
+def meta_ads_reach_estimate(
     targeting_spec: str,
     account_id: str = "",
 ) -> str:
@@ -564,7 +564,7 @@ def meta_get_reach_estimate(
 
 
 @mcp.tool()
-def meta_get_targeting_search(
+def meta_ads_targeting_search(
     q: str,
     targeting_type: str = "interests",
 ) -> str:
@@ -592,7 +592,7 @@ def meta_get_targeting_search(
 
 
 @mcp.tool()
-def meta_get_pixel_stats(
+def meta_ads_pixel_stats(
     pixel_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -614,7 +614,7 @@ def meta_get_pixel_stats(
 
 
 @mcp.tool()
-def meta_get_custom_conversions(account_id: str = "") -> str:
+def meta_ads_custom_conversions(account_id: str = "") -> str:
     """List all custom conversions defined in the Meta ad account.
 
     Args:
@@ -625,7 +625,7 @@ def meta_get_custom_conversions(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_get_ad_creatives(account_id: str = "") -> str:
+def meta_ads_ad_creatives(account_id: str = "") -> str:
     """List all ad creatives in the Meta ad account with their names and object types.
 
     Args:
@@ -640,7 +640,7 @@ def meta_get_ad_creatives(account_id: str = "") -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_list_campaigns(
+def meta_ads_list_campaigns(
     account_id: str = "",
     status_filter: str = "ALL",
 ) -> str:
@@ -663,7 +663,7 @@ def meta_list_campaigns(
 
 
 @mcp.tool()
-def meta_list_adsets(
+def meta_ads_list_adsets(
     account_id: str = "",
     campaign_id: str = "",
     status_filter: str = "ALL",
@@ -694,7 +694,7 @@ def meta_list_adsets(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_update_status(
+def meta_ads_update_status(
     object_id: str,
     object_type: str,
     status: str,
@@ -706,7 +706,7 @@ def meta_update_status(
         object_type: One of 'campaign', 'adset', or 'ad' (required).
         status: New status: ACTIVE, PAUSED, or ARCHIVED (required).
     """
-    if (err := require_editor("meta_update_status")): return err
+    if (err := require_editor("meta_ads_update_status")): return err
     field_map = {"campaign": "campaign", "adset": "adset", "ad": "ad"}
     if object_type not in field_map:
         return json.dumps({"error": "object_type must be campaign, adset, or ad"})
@@ -714,21 +714,21 @@ def meta_update_status(
 
 
 @mcp.tool()
-def meta_update_budget(
+def meta_ads_update_budget(
     campaign_id: str,
     daily_budget: str = "",
     lifetime_budget: str = "",
 ) -> str:
     """Update the daily or lifetime budget for a Meta Ads campaign (CBO — campaign-level budget).
 
-    Use meta_update_adset_budget to update budget at the ad set level.
+    Use meta_ads_update_adset_budget to update budget at the ad set level.
 
     Args:
         campaign_id: Campaign ID to update (required).
         daily_budget: New daily budget in the account currency's smallest unit, e.g. '5000' for ₪50. Leave blank to keep unchanged.
         lifetime_budget: New lifetime budget in smallest currency unit. Leave blank to keep unchanged.
     """
-    if (err := require_editor("meta_update_budget")): return err
+    if (err := require_editor("meta_ads_update_budget")): return err
     data = {}
     if daily_budget:
         data["daily_budget"] = daily_budget
@@ -740,7 +740,7 @@ def meta_update_budget(
 
 
 @mcp.tool()
-def meta_update_adset_budget(
+def meta_ads_update_adset_budget(
     adset_id: str,
     daily_budget: str = "",
     lifetime_budget: str = "",
@@ -750,7 +750,7 @@ def meta_update_adset_budget(
     """Update the budget (and optionally the bid) for a Meta Ads ad set.
 
     Works for ad sets in non-CBO campaigns where budget is set per ad set.
-    Use meta_update_budget to change a CBO campaign-level budget instead.
+    Use meta_ads_update_budget to change a CBO campaign-level budget instead.
 
     Args:
         adset_id: Ad set ID to update (required).
@@ -759,7 +759,7 @@ def meta_update_adset_budget(
         bid_amount: New manual bid in smallest currency unit. Only for COST_CAP / LOWEST_COST_WITH_BID_CAP strategies.
         end_time: New end time in ISO 8601, e.g. '2025-12-31T23:59:00+0200'. Required when switching to lifetime_budget.
     """
-    if (err := require_editor("meta_update_adset_budget")): return err
+    if (err := require_editor("meta_ads_update_adset_budget")): return err
     data: dict = {}
     if daily_budget:
         data["daily_budget"] = daily_budget
@@ -775,7 +775,7 @@ def meta_update_adset_budget(
 
 
 @mcp.tool()
-def meta_switch_budget_mode(
+def meta_ads_switch_budget_mode(
     campaign_id: str,
     mode: str,
     account_id: str = "",
@@ -788,7 +788,7 @@ def meta_switch_budget_mode(
     Ad-set mode: each ad set controls its own budget independently.
 
     When switching FROM CBO to ad-set mode: Meta clears ad set budgets during the switch.
-    Call meta_update_adset_budget for each ad set afterward to restore their budgets.
+    Call meta_ads_update_adset_budget for each ad set afterward to restore their budgets.
     The response includes the list of ad sets so you know which ones to update.
 
     When switching FROM ad-set to CBO mode: pass campaign_daily_budget or campaign_lifetime_budget
@@ -801,7 +801,7 @@ def meta_switch_budget_mode(
         campaign_daily_budget: Daily budget in smallest currency unit to set when enabling CBO, e.g. '10000' for ₪100.
         campaign_lifetime_budget: Lifetime budget in smallest currency unit to set when enabling CBO.
     """
-    if (err := require_editor("meta_switch_budget_mode")): return err
+    if (err := require_editor("meta_ads_switch_budget_mode")): return err
     if mode not in ("cbo", "adset"):
         return json.dumps({"error": "mode must be 'cbo' or 'adset'."})
 
@@ -838,12 +838,12 @@ def meta_switch_budget_mode(
         "campaign_id": campaign_id,
         "meta_response": result,
         "adsets": adsets.get("data", []),
-        "note": "Campaign switched to ad-set budgets. Use meta_update_adset_budget to set individual budgets per ad set.",
+        "note": "Campaign switched to ad-set budgets. Use meta_ads_update_adset_budget to set individual budgets per ad set.",
     })
 
 
 @mcp.tool()
-def meta_create_campaign(
+def meta_ads_create_campaign(
     name: str,
     objective: str,
     status: str = "PAUSED",
@@ -865,7 +865,7 @@ def meta_create_campaign(
         daily_budget: Daily budget in smallest currency unit (e.g. '5000' = ₪50). Only used when is_cbo=True.
         lifetime_budget: Lifetime budget in smallest currency unit. Only used when is_cbo=True.
     """
-    if (err := require_editor("meta_create_campaign")): return err
+    if (err := require_editor("meta_ads_create_campaign")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     data: dict = {
         "name": name,
@@ -882,7 +882,7 @@ def meta_create_campaign(
 
 
 @mcp.tool()
-def meta_create_adset(
+def meta_ads_create_adset(
     name: str,
     campaign_id: str,
     targeting: str,
@@ -936,7 +936,7 @@ def meta_create_adset(
         daily_spend_cap: Hard spend ceiling in CBO campaigns (smallest unit).
         advantage_audience: Set True to enable Advantage+ Audience automation (Meta AI expands beyond targeting).
     """
-    if (err := require_editor("meta_create_adset")): return err
+    if (err := require_editor("meta_ads_create_adset")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
 
     # Build targeting — inject advantage_audience if requested
@@ -979,7 +979,7 @@ def meta_create_adset(
 
 
 @mcp.tool()
-def meta_create_ad_creative(
+def meta_ads_create_ad_creative(
     name: str,
     page_id: str,
     message: str,
@@ -1001,7 +1001,7 @@ def meta_create_ad_creative(
         image_url: Image URL for the creative. Optional for link ads.
         account_id: Ad account ID. Leave blank to use .env default.
     """
-    if (err := require_editor("meta_create_ad_creative")): return err
+    if (err := require_editor("meta_ads_create_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     object_story_spec = {
         "page_id": page_id,
@@ -1020,7 +1020,7 @@ def meta_create_ad_creative(
 
 
 @mcp.tool()
-def meta_upload_ad_video(
+def meta_ads_upload_ad_video(
     file_url: str,
     title: str = "",
     account_id: str = "",
@@ -1039,7 +1039,7 @@ def meta_upload_ad_video(
     Returns:
         JSON with the new video ID, e.g. {"id": "12345678"}.
     """
-    if (err := require_editor("meta_upload_ad_video")): return err
+    if (err := require_editor("meta_ads_upload_ad_video")): return err
     import re
     import tempfile
     import os
@@ -1086,7 +1086,7 @@ def meta_upload_ad_video(
 
 
 @mcp.tool()
-def meta_create_video_ad_creative(
+def meta_ads_create_video_ad_creative(
     name: str,
     page_id: str,
     video_id: str,
@@ -1099,12 +1099,12 @@ def meta_create_video_ad_creative(
 ) -> str:
     """Create a Meta Ads creative for a video ad.
 
-    Use meta_upload_ad_video first to get a video_id, then call this tool.
+    Use meta_ads_upload_ad_video first to get a video_id, then call this tool.
 
     Args:
         name: Creative name (required).
         page_id: Facebook Page ID to post from (required).
-        video_id: Meta video ID returned by meta_upload_ad_video (required).
+        video_id: Meta video ID returned by meta_ads_upload_ad_video (required).
         message: The ad text/body copy shown above the video (required).
         title: Headline shown below the video. Optional.
         description: Description below the headline. Optional.
@@ -1112,7 +1112,7 @@ def meta_create_video_ad_creative(
         call_to_action_link: Destination URL for the CTA button. Required when call_to_action_type is set.
         account_id: Ad account ID. Leave blank to use .env default.
     """
-    if (err := require_editor("meta_create_video_ad_creative")): return err
+    if (err := require_editor("meta_ads_create_video_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     video_data: dict = {"video_id": video_id, "message": message}
     if title:
@@ -1135,7 +1135,7 @@ def meta_create_video_ad_creative(
 
 
 @mcp.tool()
-def meta_create_ad(
+def meta_ads_create_ad(
     name: str,
     adset_id: str,
     creative_id: str,
@@ -1151,7 +1151,7 @@ def meta_create_ad(
         status: ACTIVE or PAUSED. Default PAUSED.
         account_id: Ad account ID. Leave blank to use .env default.
     """
-    if (err := require_editor("meta_create_ad")): return err
+    if (err := require_editor("meta_ads_create_ad")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     return json.dumps(_post(f"{acct}/ads", {
         "name": name,
@@ -1162,7 +1162,7 @@ def meta_create_ad(
 
 
 @mcp.tool()
-def meta_duplicate_campaign(
+def meta_ads_duplicate_campaign(
     campaign_id: str,
     new_name: str = "",
     account_id: str = "",
@@ -1179,7 +1179,7 @@ def meta_duplicate_campaign(
         account_id: Ad account ID. Leave blank to use .env default.
         sequential: If True, creates a new campaign shell then duplicates each ad set individually. Use for campaigns with 4+ ad sets. Default False.
     """
-    if (err := require_editor("meta_duplicate_campaign")): return err
+    if (err := require_editor("meta_ads_duplicate_campaign")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
 
     if not sequential:
@@ -1244,7 +1244,7 @@ def meta_duplicate_campaign(
 
 
 @mcp.tool()
-def meta_duplicate_adset(
+def meta_ads_duplicate_adset(
     adset_id: str,
     new_name: str = "",
     campaign_id: str = "",
@@ -1260,7 +1260,7 @@ def meta_duplicate_adset(
         deep_copy: If True, also copies the ads inside the ad set. Default True.
         status_override: Status for the new ad set: PAUSED, ACTIVE, or INHERITED_FROM_SOURCE. Default PAUSED.
     """
-    if (err := require_editor("meta_duplicate_adset")): return err
+    if (err := require_editor("meta_ads_duplicate_adset")): return err
     # If campaign_id not provided, fetch it from the adset so Meta doesn't reject the request
     resolved_campaign_id = campaign_id
     if not resolved_campaign_id:
@@ -1294,7 +1294,7 @@ def meta_duplicate_adset(
 
 
 @mcp.tool()
-def meta_update_adset_targeting(
+def meta_ads_update_adset_targeting(
     adset_id: str,
     targeting: str = "",
     frequency_control_specs: str = "",
@@ -1327,7 +1327,7 @@ def meta_update_adset_targeting(
         status: ACTIVE, PAUSED, DELETED, or ARCHIVED.
         name: New name for the ad set.
     """
-    if (err := require_editor("meta_update_adset_targeting")): return err
+    if (err := require_editor("meta_ads_update_adset_targeting")): return err
     payload: dict = {}
     if targeting:
         try:
@@ -1368,7 +1368,7 @@ def meta_update_adset_targeting(
 
 
 @mcp.tool()
-def meta_create_audience(
+def meta_ads_create_audience(
     name: str,
     description: str = "",
     customer_file_source: str = "USER_PROVIDED_ONLY",
@@ -1382,7 +1382,7 @@ def meta_create_audience(
         customer_file_source: Source: USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED. Default USER_PROVIDED_ONLY.
         account_id: Ad account ID. Leave blank to use .env default.
     """
-    if (err := require_editor("meta_create_audience")): return err
+    if (err := require_editor("meta_ads_create_audience")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     return json.dumps(_post(f"{acct}/customaudiences", {
         "name": name,
@@ -1393,7 +1393,7 @@ def meta_create_audience(
 
 
 @mcp.tool()
-def meta_create_lookalike(
+def meta_ads_create_lookalike(
     source_audience_id: str,
     countries: str,
     ratio: float = 0.01,
@@ -1407,7 +1407,7 @@ def meta_create_lookalike(
         ratio: Lookalike ratio 0.01–0.20 (1% to 20% of population). Default 0.01.
         account_id: Ad account ID. Leave blank to use .env default.
     """
-    if (err := require_editor("meta_create_lookalike")): return err
+    if (err := require_editor("meta_ads_create_lookalike")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     country_list = [c.strip() for c in countries.split(",") if c.strip()]
     return json.dumps(_post(f"{acct}/customaudiences", {
@@ -1425,7 +1425,7 @@ def meta_create_lookalike(
 
 
 @mcp.tool()
-def meta_get_leadgen_forms(page_id: str) -> str:
+def meta_ads_leadgen_forms(page_id: str) -> str:
     """Get all lead generation forms for a Facebook Page.
 
     Args:
@@ -1470,7 +1470,7 @@ def _page_tok(page_access_token: str) -> str:
     if not page_access_token:
         raise ValueError(
             "page_access_token is required for Page operations. "
-            "Get it from the 'access_token' field in meta_get_pages response."
+            "Get it from the 'access_token' field in meta_ads_pages response."
         )
     return page_access_token
 
@@ -1480,7 +1480,7 @@ def _page_tok(page_access_token: str) -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_feed(
+def meta_ads_page_feed(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1488,8 +1488,8 @@ def meta_get_page_feed(
     """Get the published posts feed of a Facebook Page.
 
     Args:
-        page_id: Facebook Page ID (required). Get it from meta_get_pages.
-        page_access_token: Page access token. Get it from the access_token field in meta_get_pages. Falls back to user token if blank.
+        page_id: Facebook Page ID (required). Get it from meta_ads_pages.
+        page_access_token: Page access token. Get it from the access_token field in meta_ads_pages. Falls back to user token if blank.
         limit: Number of posts to return. Default 25.
     """
     tok = _page_tok(page_access_token)
@@ -1500,7 +1500,7 @@ def meta_get_page_feed(
 
 
 @mcp.tool()
-def meta_get_page_post(
+def meta_ads_page_post(
     post_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -1517,7 +1517,7 @@ def meta_get_page_post(
 
 
 @mcp.tool()
-def meta_create_page_post(
+def meta_ads_create_page_post(
     page_id: str,
     message: str = "",
     link: str = "",
@@ -1535,9 +1535,9 @@ def meta_create_page_post(
         image_url: Publicly accessible image URL to post as a photo. Optional.
         scheduled_publish_time: Unix timestamp for scheduling, e.g. '1735689600'. Only used when published=False.
         published: True to publish immediately, False to schedule. Default True.
-        page_access_token: Page access token (required for posting). Get from meta_get_pages.
+        page_access_token: Page access token (required for posting). Get from meta_ads_pages.
     """
-    if (err := require_editor("meta_create_page_post")): return err
+    if (err := require_editor("meta_ads_create_page_post")): return err
     tok = _page_tok(page_access_token)
     data: dict = {"published": "true" if published else "false"}
     if message:
@@ -1553,7 +1553,7 @@ def meta_create_page_post(
 
 
 @mcp.tool()
-def meta_update_page_post(
+def meta_ads_update_page_post(
     post_id: str,
     message: str,
     page_access_token: str = "",
@@ -1565,13 +1565,13 @@ def meta_update_page_post(
         message: New post text (required).
         page_access_token: Page access token. Falls back to user token if blank.
     """
-    if (err := require_editor("meta_update_page_post")): return err
+    if (err := require_editor("meta_ads_update_page_post")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(post_id, tok, {"message": message}))
 
 
 @mcp.tool()
-def meta_delete_page_post(
+def meta_ads_delete_page_post(
     post_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -1581,13 +1581,13 @@ def meta_delete_page_post(
         post_id: Post ID to delete (required).
         page_access_token: Page access token. Falls back to user token if blank.
     """
-    if (err := require_editor("meta_delete_page_post")): return err
+    if (err := require_editor("meta_ads_delete_page_post")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_delete_with_token(post_id, tok))
 
 
 @mcp.tool()
-def meta_get_page_scheduled_posts(
+def meta_ads_page_scheduled_posts(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1611,7 +1611,7 @@ def meta_get_page_scheduled_posts(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_post_comments(
+def meta_ads_post_comments(
     post_id: str,
     page_access_token: str = "",
     limit: int = 50,
@@ -1637,7 +1637,7 @@ def meta_get_post_comments(
 
 
 @mcp.tool()
-def meta_reply_to_comment(
+def meta_ads_reply_to_comment(
     comment_id: str,
     message: str,
     page_access_token: str = "",
@@ -1649,13 +1649,13 @@ def meta_reply_to_comment(
         message: Reply text (required).
         page_access_token: Page access token (required for replying as the page).
     """
-    if (err := require_editor("meta_reply_to_comment")): return err
+    if (err := require_editor("meta_ads_reply_to_comment")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{comment_id}/comments", tok, {"message": message}))
 
 
 @mcp.tool()
-def meta_hide_comment(
+def meta_ads_hide_comment(
     comment_id: str,
     is_hidden: bool = True,
     page_access_token: str = "",
@@ -1667,13 +1667,13 @@ def meta_hide_comment(
         is_hidden: True to hide, False to unhide. Default True.
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_hide_comment")): return err
+    if (err := require_editor("meta_ads_hide_comment")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(comment_id, tok, {"is_hidden": "true" if is_hidden else "false"}))
 
 
 @mcp.tool()
-def meta_delete_comment(
+def meta_ads_delete_comment(
     comment_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -1683,13 +1683,13 @@ def meta_delete_comment(
         comment_id: Comment ID to delete (required).
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_delete_comment")): return err
+    if (err := require_editor("meta_ads_delete_comment")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_delete_with_token(comment_id, tok))
 
 
 @mcp.tool()
-def meta_like_object(
+def meta_ads_like_object(
     object_id: str,
     page_access_token: str = "",
     unlike: bool = False,
@@ -1701,7 +1701,7 @@ def meta_like_object(
         page_access_token: Page access token (required to act as the page).
         unlike: True to remove the like, False to add it. Default False.
     """
-    if (err := require_editor("meta_like_object")): return err
+    if (err := require_editor("meta_ads_like_object")): return err
     tok = _page_tok(page_access_token)
     if unlike:
         return json.dumps(_delete_with_token(f"{object_id}/likes", tok))
@@ -1713,7 +1713,7 @@ def meta_like_object(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_conversations(
+def meta_ads_page_conversations(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1735,7 +1735,7 @@ def meta_get_page_conversations(
 
 
 @mcp.tool()
-def meta_get_conversation_messages(
+def meta_ads_conversation_messages(
     conversation_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1743,7 +1743,7 @@ def meta_get_conversation_messages(
     """Get messages in a Facebook Page conversation/thread.
 
     Args:
-        conversation_id: Conversation ID from meta_get_page_conversations (required).
+        conversation_id: Conversation ID from meta_ads_page_conversations (required).
         page_access_token: Page access token (required).
         limit: Number of messages to return. Default 25.
     """
@@ -1755,7 +1755,7 @@ def meta_get_conversation_messages(
 
 
 @mcp.tool()
-def meta_reply_to_page_message(
+def meta_ads_reply_to_page_message(
     recipient_id: str,
     message: str,
     page_id: str,
@@ -1773,7 +1773,7 @@ def meta_reply_to_page_message(
         page_access_token: Page access token with pages_messaging permission (required).
         messaging_type: RESPONSE (reply to user message), UPDATE, or MESSAGE_TAG. Default RESPONSE.
     """
-    if (err := require_editor("meta_reply_to_page_message")): return err
+    if (err := require_editor("meta_ads_reply_to_page_message")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{page_id}/messages", tok, {
         "recipient": json.dumps({"id": recipient_id}),
@@ -1787,7 +1787,7 @@ def meta_reply_to_page_message(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_photos(
+def meta_ads_page_photos(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1810,7 +1810,7 @@ def meta_get_page_photos(
 
 
 @mcp.tool()
-def meta_get_page_videos(
+def meta_ads_page_videos(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1830,7 +1830,7 @@ def meta_get_page_videos(
 
 
 @mcp.tool()
-def meta_get_page_albums(
+def meta_ads_page_albums(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1854,7 +1854,7 @@ def meta_get_page_albums(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_events(
+def meta_ads_page_events(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1881,7 +1881,7 @@ def meta_get_page_events(
 
 
 @mcp.tool()
-def meta_create_page_event(
+def meta_ads_create_page_event(
     page_id: str,
     name: str,
     start_time: str,
@@ -1928,7 +1928,7 @@ def meta_create_page_event(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_reviews(
+def meta_ads_page_reviews(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -1950,7 +1950,7 @@ def meta_get_page_reviews(
 
 
 @mcp.tool()
-def meta_get_page_info(
+def meta_ads_page_info(
     page_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -1967,7 +1967,7 @@ def meta_get_page_info(
 
 
 @mcp.tool()
-def meta_update_page_info(
+def meta_ads_update_page_info(
     page_id: str,
     page_access_token: str,
     about: str = "",
@@ -2011,7 +2011,7 @@ def meta_update_page_info(
 
 
 @mcp.tool()
-def meta_get_page_mentions(
+def meta_ads_page_mentions(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -2033,7 +2033,7 @@ def meta_get_page_mentions(
 
 
 @mcp.tool()
-def meta_get_page_post_reactions(
+def meta_ads_page_post_reactions(
     post_id: str,
     reaction_type: str = "TOTAL",
     page_access_token: str = "",
@@ -2060,7 +2060,7 @@ def meta_get_page_post_reactions(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_roles(
+def meta_ads_page_roles(
     page_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -2082,7 +2082,7 @@ def meta_get_page_roles(
 
 
 @mcp.tool()
-def meta_add_page_role(
+def meta_ads_add_page_role(
     page_id: str,
     user: str,
     role: str,
@@ -2098,7 +2098,7 @@ def meta_add_page_role(
         role: Role to assign: ADMINISTRATOR, EDITOR, MODERATOR, ADVERTISER, or ANALYST (required).
         page_access_token: Page access token with admin rights (required).
     """
-    if (err := require_editor("meta_add_page_role")): return err
+    if (err := require_editor("meta_ads_add_page_role")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{page_id}/roles", tok, {
         "user": user,
@@ -2107,7 +2107,7 @@ def meta_add_page_role(
 
 
 @mcp.tool()
-def meta_remove_page_role(
+def meta_ads_remove_page_role(
     page_id: str,
     user: str,
     page_access_token: str,
@@ -2121,7 +2121,7 @@ def meta_remove_page_role(
         user: Facebook user ID of the person to remove (required).
         page_access_token: Page access token with admin rights (required).
     """
-    if (err := require_editor("meta_remove_page_role")): return err
+    if (err := require_editor("meta_ads_remove_page_role")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{page_id}/roles", tok, {
         "user": user,
@@ -2130,7 +2130,7 @@ def meta_remove_page_role(
 
 
 @mcp.tool()
-def meta_get_page_blocked_users(
+def meta_ads_page_blocked_users(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -2150,7 +2150,7 @@ def meta_get_page_blocked_users(
 
 
 @mcp.tool()
-def meta_block_page_user(
+def meta_ads_block_page_user(
     page_id: str,
     user_id: str,
     page_access_token: str,
@@ -2162,13 +2162,13 @@ def meta_block_page_user(
         user_id: Facebook user ID to block (required).
         page_access_token: Page access token with moderation rights (required).
     """
-    if (err := require_editor("meta_block_page_user")): return err
+    if (err := require_editor("meta_ads_block_page_user")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{page_id}/blocked", tok, {"user": user_id}))
 
 
 @mcp.tool()
-def meta_unblock_page_user(
+def meta_ads_unblock_page_user(
     page_id: str,
     user_id: str,
     page_access_token: str,
@@ -2180,7 +2180,7 @@ def meta_unblock_page_user(
         user_id: Facebook user ID to unblock (required).
         page_access_token: Page access token with moderation rights (required).
     """
-    if (err := require_editor("meta_unblock_page_user")): return err
+    if (err := require_editor("meta_ads_unblock_page_user")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_delete_with_token(f"{page_id}/blocked?user={user_id}", tok))
 
@@ -2190,7 +2190,7 @@ def meta_unblock_page_user(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_instagram_account(
+def meta_ads_instagram_account(
     page_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -2209,7 +2209,7 @@ def meta_get_instagram_account(
 
 
 @mcp.tool()
-def meta_get_instagram_media(
+def meta_ads_instagram_media(
     instagram_account_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -2217,7 +2217,7 @@ def meta_get_instagram_media(
     """Get media (posts) from an Instagram Business account linked to a Facebook Page.
 
     Args:
-        instagram_account_id: Instagram Business Account ID (get it from meta_get_instagram_account) (required).
+        instagram_account_id: Instagram Business Account ID (get it from meta_ads_instagram_account) (required).
         page_access_token: Page access token. Falls back to user token if blank.
         limit: Number of media items to return. Default 25.
     """
@@ -2229,7 +2229,7 @@ def meta_get_instagram_media(
 
 
 @mcp.tool()
-def meta_create_instagram_post(
+def meta_ads_create_instagram_post(
     instagram_account_id: str,
     image_url: str,
     caption: str = "",
@@ -2250,7 +2250,7 @@ def meta_create_instagram_post(
         is_carousel: True to create a carousel post. Pass children IDs in 'children'. Default False.
         children: Comma-separated container IDs for carousel items. Only used when is_carousel=True.
     """
-    if (err := require_editor("meta_create_instagram_post")): return err
+    if (err := require_editor("meta_ads_create_instagram_post")): return err
     tok = _page_tok(page_access_token)
 
     if is_carousel:
@@ -2281,7 +2281,7 @@ def meta_create_instagram_post(
 
 
 @mcp.tool()
-def meta_get_instagram_insights(
+def meta_ads_instagram_insights(
     instagram_account_id: str,
     metric: str = "impressions,reach,follower_count,profile_views",
     period: str = "day",
@@ -2314,7 +2314,7 @@ def meta_get_instagram_insights(
 
 
 @mcp.tool()
-def meta_publish_page_post_to_instagram(
+def meta_ads_publish_page_post_to_instagram(
     page_id: str,
     post_id: str,
     page_access_token: str,
@@ -2328,7 +2328,7 @@ def meta_publish_page_post_to_instagram(
         post_id: Facebook Page post ID to cross-post (required).
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_publish_page_post_to_instagram")): return err
+    if (err := require_editor("meta_ads_publish_page_post_to_instagram")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(f"{page_id}/crosspost_whitelisted_pages", tok, {
         "crosspost_id": post_id,
@@ -2340,7 +2340,7 @@ def meta_publish_page_post_to_instagram(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_set_page_publish_status(
+def meta_ads_set_page_publish_status(
     page_id: str,
     is_published: bool,
     page_access_token: str,
@@ -2354,7 +2354,7 @@ def meta_set_page_publish_status(
         is_published: True to publish/make visible, False to unpublish/hide. (required).
         page_access_token: Page access token with admin rights (required).
     """
-    if (err := require_editor("meta_set_page_publish_status")): return err
+    if (err := require_editor("meta_ads_set_page_publish_status")): return err
     tok = _page_tok(page_access_token)
     return json.dumps(_post_with_token(page_id, tok, {
         "is_published": "true" if is_published else "false",
@@ -2362,7 +2362,7 @@ def meta_set_page_publish_status(
 
 
 @mcp.tool()
-def meta_get_page_insights_extended(
+def meta_ads_page_insights_extended(
     page_id: str,
     metrics: str = "page_impressions,page_reach,page_engaged_users,page_fan_adds,page_fan_removes,page_views_total,page_post_engagements,page_actions_post_reactions_total",
     period: str = "day",
@@ -2456,7 +2456,7 @@ _VIDEO_MIME_TYPES = [
 
 
 @mcp.tool()
-def google_drive_list_videos(
+def meta_google_drive_list_videos(
     folder_url: str = "",
 ) -> str:
     """List all video files inside a Google Drive folder.
@@ -2470,8 +2470,8 @@ def google_drive_list_videos(
     Returns:
         JSON array of video files, each with:
         id, name, mimeType, size (bytes), modifiedTime, webViewLink.
-        Pass the 'id' or 'webViewLink' to google_drive_get_video_info or
-        meta_upload_ad_video.
+        Pass the 'id' or 'webViewLink' to meta_google_drive_get_video_info or
+        meta_ads_upload_ad_video.
     """
     service = _gdrive_service()
 
@@ -2498,7 +2498,7 @@ def google_drive_list_videos(
 
 
 @mcp.tool()
-def google_drive_get_video_info(
+def meta_google_drive_get_video_info(
     file_url: str,
 ) -> str:
     """Get detailed metadata for a Google Drive video file.
@@ -2528,7 +2528,7 @@ def google_drive_get_video_info(
 
 
 @mcp.tool()
-def google_drive_upload_video_to_meta(
+def meta_google_drive_upload_video_to_meta(
     file_url: str,
     title: str = "",
     account_id: str = "",
@@ -2536,7 +2536,7 @@ def google_drive_upload_video_to_meta(
     """Full one-shot flow: download a video from Google Drive and upload it to
     the Meta Ads video library.
 
-    Combines google_drive_get_video_info + meta_upload_ad_video into a single
+    Combines meta_google_drive_get_video_info + meta_ads_upload_ad_video into a single
     call. Handles large files and the Drive virus-scan warning page automatically.
 
     Args:
@@ -2597,7 +2597,7 @@ def google_drive_upload_video_to_meta(
 
 
 @mcp.tool()
-def google_drive_list_files(
+def meta_google_drive_list_files(
     folder_url: str = "",
     mime_type_filter: str = "",
     page_size: int = 50,
@@ -2655,7 +2655,7 @@ def google_drive_list_files(
 
 
 @mcp.tool()
-def google_drive_download_file(
+def meta_google_drive_download_file(
     file_url: str,
     destination_dir: str = "",
 ) -> str:
@@ -2744,7 +2744,7 @@ def google_drive_download_file(
 
 
 @mcp.tool()
-def google_drive_watch_folder(
+def meta_google_drive_watch_folder(
     folder_url: str,
     since_minutes: int = 60,
     mime_type_filter: str = "",
@@ -2822,7 +2822,7 @@ def google_drive_watch_folder(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_ad_account(
+def meta_ads_ad_account(
     account_id: str = "",
 ) -> str:
     """Get full details for a specific Meta ad account: name, currency, timezone, status, balance, spend.
@@ -2837,7 +2837,7 @@ def meta_get_ad_account(
 
 
 @mcp.tool()
-def meta_get_account_spending_limit(
+def meta_ads_account_spending_limit(
     account_id: str = "",
 ) -> str:
     """Get the spend cap, daily limit, amount spent, and remaining budget for a Meta ad account.
@@ -2866,7 +2866,7 @@ def meta_get_account_spending_limit(
 
 
 @mcp.tool()
-def meta_list_ads(
+def meta_ads_list_ads(
     account_id: str = "",
     campaign_id: str = "",
     adset_id: str = "",
@@ -2898,7 +2898,7 @@ def meta_list_ads(
 
 
 @mcp.tool()
-def meta_get_ad(
+def meta_ads_ad(
     ad_id: str,
 ) -> str:
     """Get full details for a specific Meta ad including creative, adset, campaign, tracking specs.
@@ -2912,7 +2912,7 @@ def meta_get_ad(
 
 
 @mcp.tool()
-def meta_update_ad(
+def meta_ads_update_ad(
     ad_id: str,
     name: str = "",
     status: str = "",
@@ -2924,7 +2924,7 @@ def meta_update_ad(
         name: New ad name. Leave blank to keep unchanged.
         status: New status: ACTIVE, PAUSED, or ARCHIVED. Leave blank to keep unchanged.
     """
-    if (err := require_editor("meta_update_ad")): return err
+    if (err := require_editor("meta_ads_update_ad")): return err
     data: dict = {}
     if name:
         data["name"] = name
@@ -2937,7 +2937,7 @@ def meta_update_ad(
 
 
 @mcp.tool()
-def meta_delete_ad(
+def meta_ads_delete_ad(
     ad_id: str,
 ) -> str:
     """Delete (archive) a Meta ad.
@@ -2945,13 +2945,13 @@ def meta_delete_ad(
     Args:
         ad_id: Ad ID to delete (required).
     """
-    if (err := require_editor("meta_delete_ad")): return err
+    if (err := require_editor("meta_ads_delete_ad")): return err
     result = _delete(ad_id)
     return json.dumps({"success": result.get("success", False), "ad_id": ad_id, **result})
 
 
 @mcp.tool()
-def meta_delete_adset(
+def meta_ads_delete_adset(
     adset_id: str,
 ) -> str:
     """Delete (archive) a Meta ad set.
@@ -2959,13 +2959,13 @@ def meta_delete_adset(
     Args:
         adset_id: Ad set ID to delete (required).
     """
-    if (err := require_editor("meta_delete_adset")): return err
+    if (err := require_editor("meta_ads_delete_adset")): return err
     result = _delete(adset_id)
     return json.dumps({"success": result.get("success", False), "adset_id": adset_id, **result})
 
 
 @mcp.tool()
-def meta_delete_campaign(
+def meta_ads_delete_campaign(
     campaign_id: str,
 ) -> str:
     """Delete (archive) a Meta campaign.
@@ -2973,7 +2973,7 @@ def meta_delete_campaign(
     Args:
         campaign_id: Campaign ID to delete (required).
     """
-    if (err := require_editor("meta_delete_campaign")): return err
+    if (err := require_editor("meta_ads_delete_campaign")): return err
     result = _delete(campaign_id)
     return json.dumps({"success": result.get("success", False), "campaign_id": campaign_id, **result})
 
@@ -2983,7 +2983,7 @@ def meta_delete_campaign(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_ad_creative(
+def meta_ads_ad_creative(
     creative_id: str,
 ) -> str:
     """Get full details of a specific Meta ad creative including image hash, video ID, copy, and call-to-action.
@@ -2997,7 +2997,7 @@ def meta_get_ad_creative(
 
 
 @mcp.tool()
-def meta_update_ad_creative(
+def meta_ads_update_ad_creative(
     creative_id: str,
     account_id: str = "",
     body: str = "",
@@ -3007,7 +3007,7 @@ def meta_update_ad_creative(
 ) -> str:
     """Update ad creative copy by creating a new creative (Meta does not allow in-place edits).
 
-    Returns the new_creative_id — use meta_update_ad to attach it to your ad.
+    Returns the new_creative_id — use meta_ads_update_ad to attach it to your ad.
 
     Args:
         creative_id: Existing creative ID to base the copy on (required).
@@ -3017,7 +3017,7 @@ def meta_update_ad_creative(
         call_to_action_type: CTA type e.g. LEARN_MORE, SHOP_NOW, SIGN_UP. Leave blank to keep original.
         call_to_action_link: CTA destination URL. Leave blank to keep original.
     """
-    if (err := require_editor("meta_update_ad_creative")): return err
+    if (err := require_editor("meta_ads_update_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     # Fetch existing creative
     existing = _get(f"{creative_id}", {
@@ -3065,7 +3065,7 @@ def meta_update_ad_creative(
 
 
 @mcp.tool()
-def meta_upload_image_to_meta(
+def meta_ads_upload_image_to_meta(
     image_url: str,
     account_id: str = "",
 ) -> str:
@@ -3077,7 +3077,7 @@ def meta_upload_image_to_meta(
         image_url: Public URL of the image (JPEG or PNG) to upload (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_upload_image_to_meta")): return err
+    if (err := require_editor("meta_ads_upload_image_to_meta")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     result = _post(f"{acct}/adimages", {"url": image_url})
     if "error" in result:
@@ -3090,7 +3090,7 @@ def meta_upload_image_to_meta(
 
 
 @mcp.tool()
-def meta_create_carousel_ad_creative(
+def meta_ads_create_carousel_ad_creative(
     name: str,
     page_id: str,
     message: str,
@@ -3108,7 +3108,7 @@ def meta_create_carousel_ad_creative(
         cards: JSON array of card objects. Each card: {"image_hash": str, "video_id": str, "title": str, "description": str, "link": str, "call_to_action_type": str}. image_hash or video_id required per card (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_create_carousel_ad_creative")): return err
+    if (err := require_editor("meta_ads_create_carousel_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         card_list = json.loads(cards)
@@ -3149,7 +3149,7 @@ def meta_create_carousel_ad_creative(
 
 
 @mcp.tool()
-def meta_create_story_ad_creative(
+def meta_ads_create_story_ad_creative(
     name: str,
     page_id: str,
     body: str,
@@ -3169,11 +3169,11 @@ def meta_create_story_ad_creative(
         link: Destination URL (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
         instagram_account_id: Instagram account ID if targeting Instagram Stories.
-        image_hash: Image hash from meta_upload_image_to_meta. Use this OR video_id.
-        video_id: Video ID from meta_upload_ad_video. Use this OR image_hash.
+        image_hash: Image hash from meta_ads_upload_image_to_meta. Use this OR video_id.
+        video_id: Video ID from meta_ads_upload_ad_video. Use this OR image_hash.
         call_to_action_type: CTA type e.g. LEARN_MORE, SHOP_NOW. Default LEARN_MORE.
     """
-    if (err := require_editor("meta_create_story_ad_creative")): return err
+    if (err := require_editor("meta_ads_create_story_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     if not image_hash and not video_id:
         return json.dumps({"error": "Provide either image_hash or video_id."})
@@ -3206,7 +3206,7 @@ def meta_create_story_ad_creative(
 
 
 @mcp.tool()
-def meta_create_collection_ad_creative(
+def meta_ads_create_collection_ad_creative(
     name: str,
     page_id: str,
     body: str,
@@ -3230,7 +3230,7 @@ def meta_create_collection_ad_creative(
         hero_image_hash: Image hash for the hero. Use this OR hero_video_id.
         hero_video_id: Video ID for the hero. Use this OR hero_image_hash.
     """
-    if (err := require_editor("meta_create_collection_ad_creative")): return err
+    if (err := require_editor("meta_ads_create_collection_ad_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     if not hero_image_hash and not hero_video_id:
         return json.dumps({"error": "Provide either hero_image_hash or hero_video_id."})
@@ -3275,7 +3275,7 @@ def meta_create_collection_ad_creative(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_upload_customer_list_to_audience(
+def meta_ads_upload_customer_list_to_audience(
     audience_id: str,
     users: str,
     operation: str = "ADD",
@@ -3291,7 +3291,7 @@ def meta_upload_customer_list_to_audience(
         operation: ADD to add users, REMOVE to remove them. Default ADD.
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_upload_customer_list_to_audience")): return err
+    if (err := require_editor("meta_ads_upload_customer_list_to_audience")): return err
     try:
         user_list = json.loads(users)
     except Exception:
@@ -3344,7 +3344,7 @@ def meta_upload_customer_list_to_audience(
 
 
 @mcp.tool()
-def meta_delete_audience(
+def meta_ads_delete_audience(
     audience_id: str,
 ) -> str:
     """Delete a Meta Custom Audience.
@@ -3352,13 +3352,13 @@ def meta_delete_audience(
     Args:
         audience_id: Custom audience ID to delete (required).
     """
-    if (err := require_editor("meta_delete_audience")): return err
+    if (err := require_editor("meta_ads_delete_audience")): return err
     result = _delete(audience_id)
     return json.dumps({"success": result.get("success", False), "audience_id": audience_id, **result})
 
 
 @mcp.tool()
-def meta_get_audience(
+def meta_ads_audience(
     audience_id: str,
 ) -> str:
     """Get details and estimated size for a specific Meta Custom Audience.
@@ -3372,7 +3372,7 @@ def meta_get_audience(
 
 
 @mcp.tool()
-def meta_update_audience(
+def meta_ads_update_audience(
     audience_id: str,
     name: str = "",
     description: str = "",
@@ -3384,7 +3384,7 @@ def meta_update_audience(
         name: New audience name. Leave blank to keep unchanged.
         description: New audience description. Leave blank to keep unchanged.
     """
-    if (err := require_editor("meta_update_audience")): return err
+    if (err := require_editor("meta_ads_update_audience")): return err
     data: dict = {}
     if name:
         data["name"] = name
@@ -3397,7 +3397,7 @@ def meta_update_audience(
 
 
 @mcp.tool()
-def meta_create_website_audience(
+def meta_ads_create_website_audience(
     name: str,
     pixel_id: str,
     event: str,
@@ -3419,7 +3419,7 @@ def meta_create_website_audience(
         url_equals: Optional URL condition — include users who visited this exact URL.
         description: Audience description.
     """
-    if (err := require_editor("meta_create_website_audience")): return err
+    if (err := require_editor("meta_ads_create_website_audience")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     rule_conditions: list = [{"event_sources": [{"id": pixel_id, "type": "pixel"}], "retention_seconds": retention_days * 86400, "filter": {"operator": "and", "filters": [{"field": "event", "operator": "=", "value": event}]}}]
     if url_contains:
@@ -3441,7 +3441,7 @@ def meta_create_website_audience(
 
 
 @mcp.tool()
-def meta_create_engagement_audience(
+def meta_ads_create_engagement_audience(
     name: str,
     source_type: str,
     source_id: str,
@@ -3461,7 +3461,7 @@ def meta_create_engagement_audience(
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
         description: Audience description.
     """
-    if (err := require_editor("meta_create_engagement_audience")): return err
+    if (err := require_editor("meta_ads_create_engagement_audience")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     engagement_spec = {
         "object_id": source_id,
@@ -3486,7 +3486,7 @@ def meta_create_engagement_audience(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_campaign_performance(
+def meta_ads_campaign_performance(
     campaign_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -3513,7 +3513,7 @@ def meta_get_campaign_performance(
 
 
 @mcp.tool()
-def meta_get_adset_performance(
+def meta_ads_adset_performance(
     adset_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -3540,7 +3540,7 @@ def meta_get_adset_performance(
 
 
 @mcp.tool()
-def meta_get_ad_performance(
+def meta_ads_ad_performance(
     ad_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -3567,7 +3567,7 @@ def meta_get_ad_performance(
 
 
 @mcp.tool()
-def meta_get_geo_performance(
+def meta_ads_geo_performance(
     account_id: str = "",
     campaign_id: str = "",
     start_date: str = "",
@@ -3597,7 +3597,7 @@ def meta_get_geo_performance(
 
 
 @mcp.tool()
-def meta_get_device_performance(
+def meta_ads_device_performance(
     account_id: str = "",
     campaign_id: str = "",
     start_date: str = "",
@@ -3624,7 +3624,7 @@ def meta_get_device_performance(
 
 
 @mcp.tool()
-def meta_get_attribution_report(
+def meta_ads_attribution_report(
     account_id: str = "",
     campaign_id: str = "",
     start_date: str = "",
@@ -3659,7 +3659,7 @@ def meta_get_attribution_report(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_pixel(
+def meta_ads_create_pixel(
     name: str,
     account_id: str = "",
 ) -> str:
@@ -3669,7 +3669,7 @@ def meta_create_pixel(
         name: Pixel name (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_create_pixel")): return err
+    if (err := require_editor("meta_ads_create_pixel")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     result = _post(f"{acct}/adspixels", {"name": name})
     if "error" in result:
@@ -3678,7 +3678,7 @@ def meta_create_pixel(
 
 
 @mcp.tool()
-def meta_get_pixel_events(
+def meta_ads_pixel_events(
     pixel_id: str,
     start_date: str = "",
     end_date: str = "",
@@ -3700,7 +3700,7 @@ def meta_get_pixel_events(
 
 
 @mcp.tool()
-def meta_send_server_event(
+def meta_ads_send_server_event(
     pixel_id: str,
     event_name: str,
     event_time: str,
@@ -3729,7 +3729,7 @@ def meta_send_server_event(
         event_id: Unique ID for deduplication with browser pixel. Must match the event_id sent by the browser pixel for the same event.
         action_source: Where the event happened. One of: website, app, email, phone_call, chat, physical_store, system_generated, other. Default: website.
     """
-    if (err := require_editor("meta_send_server_event")): return err
+    if (err := require_editor("meta_ads_send_server_event")): return err
     try:
         ud = json.loads(user_data)
     except Exception:
@@ -3795,7 +3795,7 @@ def meta_send_server_event(
 
 
 @mcp.tool()
-def meta_create_custom_conversion(
+def meta_ads_create_custom_conversion(
     name: str,
     pixel_id: str,
     rule: str,
@@ -3813,7 +3813,7 @@ def meta_create_custom_conversion(
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
         description: Optional description.
     """
-    if (err := require_editor("meta_create_custom_conversion")): return err
+    if (err := require_editor("meta_ads_create_custom_conversion")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     data: dict = {
         "name": name,
@@ -3835,7 +3835,7 @@ def meta_create_custom_conversion(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_instagram_stories(
+def meta_ads_instagram_stories(
     instagram_account_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -3852,7 +3852,7 @@ def meta_get_instagram_stories(
 
 
 @mcp.tool()
-def meta_create_instagram_reel(
+def meta_ads_create_instagram_reel(
     instagram_account_id: str,
     video_url: str,
     page_access_token: str,
@@ -3870,7 +3870,7 @@ def meta_create_instagram_reel(
         caption: Reel caption text. Optional.
         share_to_feed: Also show the Reel in the feed. Default True.
     """
-    if (err := require_editor("meta_create_instagram_reel")): return err
+    if (err := require_editor("meta_ads_create_instagram_reel")): return err
     tok = _page_tok(page_access_token)
     container_data: dict = {
         "media_type": "REELS",
@@ -3899,7 +3899,7 @@ def meta_create_instagram_reel(
 
 
 @mcp.tool()
-def meta_get_instagram_post_insights(
+def meta_ads_instagram_post_insights(
     media_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -3916,7 +3916,7 @@ def meta_get_instagram_post_insights(
 
 
 @mcp.tool()
-def meta_schedule_instagram_post(
+def meta_ads_schedule_instagram_post(
     instagram_account_id: str,
     image_url: str,
     publish_at: str,
@@ -3932,7 +3932,7 @@ def meta_schedule_instagram_post(
         page_access_token: Page access token with instagram_content_publish permission (required).
         caption: Post caption text. Optional.
     """
-    if (err := require_editor("meta_schedule_instagram_post")): return err
+    if (err := require_editor("meta_ads_schedule_instagram_post")): return err
     import datetime as _dt
     tok = _page_tok(page_access_token)
     try:
@@ -3959,7 +3959,7 @@ def meta_schedule_instagram_post(
 
 
 @mcp.tool()
-def meta_delete_instagram_post(
+def meta_ads_delete_instagram_post(
     media_id: str,
     page_access_token: str,
 ) -> str:
@@ -3969,14 +3969,14 @@ def meta_delete_instagram_post(
         media_id: Instagram media ID to delete (required).
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_delete_instagram_post")): return err
+    if (err := require_editor("meta_ads_delete_instagram_post")): return err
     tok = _page_tok(page_access_token)
     result = _delete_with_token(media_id, tok)
     return json.dumps({"success": result.get("success", False), "media_id": media_id, **result})
 
 
 @mcp.tool()
-def meta_get_instagram_mentions(
+def meta_ads_instagram_mentions(
     instagram_account_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -3996,7 +3996,7 @@ def meta_get_instagram_mentions(
 
 
 @mcp.tool()
-def meta_reply_to_instagram_comment(
+def meta_ads_reply_to_instagram_comment(
     comment_id: str,
     message: str,
     page_access_token: str,
@@ -4008,7 +4008,7 @@ def meta_reply_to_instagram_comment(
         message: Reply text (required).
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_reply_to_instagram_comment")): return err
+    if (err := require_editor("meta_ads_reply_to_instagram_comment")): return err
     tok = _page_tok(page_access_token)
     result = _post_with_token(f"{comment_id}/replies", tok, {"message": message})
     if "error" in result:
@@ -4017,7 +4017,7 @@ def meta_reply_to_instagram_comment(
 
 
 @mcp.tool()
-def meta_delete_instagram_comment(
+def meta_ads_delete_instagram_comment(
     comment_id: str,
     page_access_token: str,
 ) -> str:
@@ -4027,14 +4027,14 @@ def meta_delete_instagram_comment(
         comment_id: Instagram comment ID to delete (required).
         page_access_token: Page access token (required).
     """
-    if (err := require_editor("meta_delete_instagram_comment")): return err
+    if (err := require_editor("meta_ads_delete_instagram_comment")): return err
     tok = _page_tok(page_access_token)
     result = _delete_with_token(comment_id, tok)
     return json.dumps({"success": result.get("success", False), "comment_id": comment_id, **result})
 
 
 @mcp.tool()
-def meta_get_instagram_hashtag_posts(
+def meta_ads_instagram_hashtag_posts(
     hashtag: str,
     instagram_account_id: str,
     page_access_token: str = "",
@@ -4070,7 +4070,7 @@ def meta_get_instagram_hashtag_posts(
 
 
 @mcp.tool()
-def meta_get_instagram_competitor_analysis(
+def meta_ads_instagram_competitor_analysis(
     target_username: str,
     instagram_account_id: str,
     page_access_token: str = "",
@@ -4093,7 +4093,7 @@ def meta_get_instagram_competitor_analysis(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_page_photo_album(
+def meta_ads_page_photo_album(
     album_id: str,
     page_access_token: str = "",
     limit: int = 50,
@@ -4101,7 +4101,7 @@ def meta_get_page_photo_album(
     """Get all photos in a specific Facebook Page photo album.
 
     Args:
-        album_id: Album ID from meta_get_page_albums (required).
+        album_id: Album ID from meta_ads_page_albums (required).
         page_access_token: Page access token. Falls back to user token if blank.
         limit: Number of photos to return. Default 50.
     """
@@ -4113,7 +4113,7 @@ def meta_get_page_photo_album(
 
 
 @mcp.tool()
-def meta_create_page_photo_album(
+def meta_ads_create_page_photo_album(
     page_id: str,
     name: str,
     page_access_token: str,
@@ -4129,7 +4129,7 @@ def meta_create_page_photo_album(
         description: Album description. Optional.
         location: Album location. Optional.
     """
-    if (err := require_editor("meta_create_page_photo_album")): return err
+    if (err := require_editor("meta_ads_create_page_photo_album")): return err
     tok = _page_tok(page_access_token)
     data: dict = {"name": name}
     if description:
@@ -4143,7 +4143,7 @@ def meta_create_page_photo_album(
 
 
 @mcp.tool()
-def meta_get_page_stories(
+def meta_ads_page_stories(
     page_id: str,
     page_access_token: str,
 ) -> str:
@@ -4161,7 +4161,7 @@ def meta_get_page_stories(
 
 
 @mcp.tool()
-def meta_pin_post(
+def meta_ads_pin_post(
     page_id: str,
     post_id: str,
     page_access_token: str,
@@ -4173,14 +4173,14 @@ def meta_pin_post(
         post_id: Post ID to pin (required).
         page_access_token: Page access token with admin rights (required).
     """
-    if (err := require_editor("meta_pin_post")): return err
+    if (err := require_editor("meta_ads_pin_post")): return err
     tok = _page_tok(page_access_token)
     result = _post_with_token(page_id, tok, {"pinned_post": post_id})
     return json.dumps({"success": "error" not in result, "post_id": post_id, "page_id": page_id, **result})
 
 
 @mcp.tool()
-def meta_get_page_tags(
+def meta_ads_page_tags(
     page_id: str,
     page_access_token: str = "",
 ) -> str:
@@ -4198,7 +4198,7 @@ def meta_get_page_tags(
 
 
 @mcp.tool()
-def meta_get_page_liked_pages(
+def meta_ads_page_liked_pages(
     page_id: str,
     page_access_token: str = "",
     limit: int = 25,
@@ -4222,7 +4222,7 @@ def meta_get_page_liked_pages(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_list_catalog_products(
+def meta_ads_list_catalog_products(
     catalog_id: str,
     limit: int = 50,
     filter_status: str = "",
@@ -4244,7 +4244,7 @@ def meta_list_catalog_products(
 
 
 @mcp.tool()
-def meta_get_catalog_diagnostics(
+def meta_ads_catalog_diagnostics(
     catalog_id: str,
 ) -> str:
     """Get product feed errors and warnings for a Meta catalog.
@@ -4259,7 +4259,7 @@ def meta_get_catalog_diagnostics(
 
 
 @mcp.tool()
-def meta_create_product_set(
+def meta_ads_create_product_set(
     catalog_id: str,
     name: str,
     filter: str,
@@ -4271,7 +4271,7 @@ def meta_create_product_set(
         name: Product set name (required).
         filter: JSON filter expression. Examples: '{"retailer_id":{"is_any":["SKU1","SKU2"]}}' or '{"price":{"gt":10000}}' (prices in cents) or '{"category":{"is_any":["Shoes"]}}' (required).
     """
-    if (err := require_editor("meta_create_product_set")): return err
+    if (err := require_editor("meta_ads_create_product_set")): return err
     result = _post(f"{catalog_id}/product_sets", {
         "name": name,
         "filter": filter,
@@ -4282,7 +4282,7 @@ def meta_create_product_set(
 
 
 @mcp.tool()
-def meta_get_product_sets(
+def meta_ads_product_sets(
     catalog_id: str,
 ) -> str:
     """List all product sets in a Meta catalog.
@@ -4301,7 +4301,7 @@ def meta_get_product_sets(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_ad_account_users(
+def meta_ads_ad_account_users(
     account_id: str = "",
 ) -> str:
     """List all users with access to a Meta ad account, including their roles and permission levels.
@@ -4317,7 +4317,7 @@ def meta_get_ad_account_users(
 
 
 @mcp.tool()
-def meta_add_ad_account_user(
+def meta_ads_add_ad_account_user(
     user_id: str,
     role: str,
     account_id: str = "",
@@ -4329,7 +4329,7 @@ def meta_add_ad_account_user(
         role: User role: ADMIN (1001), GENERAL_USER (1002), or REPORTS_ONLY (1003) (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_add_ad_account_user")): return err
+    if (err := require_editor("meta_ads_add_ad_account_user")): return err
     role_map = {"ADMIN": 1001, "GENERAL_USER": 1002, "REPORTS_ONLY": 1003}
     if role not in role_map:
         return json.dumps({"error": f"role must be one of: {', '.join(role_map.keys())}"})
@@ -4342,7 +4342,7 @@ def meta_add_ad_account_user(
 
 
 @mcp.tool()
-def meta_remove_ad_account_user(
+def meta_ads_remove_ad_account_user(
     user_id: str,
     account_id: str = "",
 ) -> str:
@@ -4352,7 +4352,7 @@ def meta_remove_ad_account_user(
         user_id: Facebook User ID to remove (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_remove_ad_account_user")): return err
+    if (err := require_editor("meta_ads_remove_ad_account_user")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     resp = requests.delete(
         f"{GRAPH_BASE}/{acct}/userpermissions",
@@ -4366,7 +4366,7 @@ def meta_remove_ad_account_user(
 
 
 @mcp.tool()
-def meta_get_business_pages(
+def meta_ads_business_pages(
     business_id: str,
 ) -> str:
     """Get all Facebook Pages connected to a Meta Business account.
@@ -4381,7 +4381,7 @@ def meta_get_business_pages(
 
 
 @mcp.tool()
-def meta_get_targeting_suggestions(
+def meta_ads_targeting_suggestions(
     interests: str,
     limit: int = 25,
 ) -> str:
@@ -4400,7 +4400,7 @@ def meta_get_targeting_suggestions(
 
 
 @mcp.tool()
-def meta_copy_ad_to_adset(
+def meta_ads_copy_ad_to_adset(
     ad_id: str,
     target_adset_id: str,
     new_name: str = "",
@@ -4414,7 +4414,7 @@ def meta_copy_ad_to_adset(
         new_name: Name for the copied ad. Leave blank to auto-generate.
         status: Status for the new ad: ACTIVE or PAUSED. Default PAUSED.
     """
-    if (err := require_editor("meta_copy_ad_to_adset")): return err
+    if (err := require_editor("meta_ads_copy_ad_to_adset")): return err
     params: dict = {"adset_id": target_adset_id, "status_option": "PAUSED" if status == "PAUSED" else "ACTIVE"}
     if new_name:
         params["rename_options"] = json.dumps({"rename_strategy": "EXACT_COPY", "overwrite_with_name": new_name})
@@ -4426,7 +4426,7 @@ def meta_copy_ad_to_adset(
 
 
 @mcp.tool()
-def meta_preview_ad_creative(
+def meta_ads_preview_ad_creative(
     creative_id: str,
     ad_format: str = "MOBILE_FEED_STANDARD",
 ) -> str:
@@ -4447,7 +4447,7 @@ def meta_preview_ad_creative(
 
 
 @mcp.tool()
-def meta_bulk_updater(
+def meta_ads_bulk_updater(
     object_ids: str,
     object_type: str,
     action: str,
@@ -4469,14 +4469,14 @@ def meta_bulk_updater(
         params: JSON string with action-specific overrides.
                   pause/activate    → not needed
                   update_budget     → {"daily_budget": "5000"} or {"lifetime_budget": "50000"}
-                  update_targeting  → any field accepted by meta_update_adset_targeting,
+                  update_targeting  → any field accepted by meta_ads_update_adset_targeting,
                                       e.g. '{"targeting":"{...}","advantage_audience":true}'
                   duplicate         → {"status_override":"PAUSED","deep_copy":true}
         delay_ms: Milliseconds between API calls. Default 300.
         dry_run: If True, return the list of planned operations WITHOUT executing them.
                  Always call with dry_run=True first, confirm with user, then run for real.
     """
-    if (err := require_editor("meta_bulk_updater")): return err
+    if (err := require_editor("meta_ads_bulk_updater")): return err
     valid_types = {"campaign", "adset", "ad"}
     valid_actions = {"pause", "activate", "update_budget", "update_targeting", "duplicate"}
     if object_type not in valid_types:
@@ -4587,7 +4587,7 @@ def meta_bulk_updater(
 
 
 @mcp.tool()
-def meta_image_pipeline(
+def meta_ads_image_pipeline(
     image_url: str,
     account_id: str = "",
 ) -> str:
@@ -4602,7 +4602,7 @@ def meta_image_pipeline(
         image_url: Public URL to the JPG/PNG/GIF image to upload (required).
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
     """
-    if (err := require_editor("meta_image_pipeline")): return err
+    if (err := require_editor("meta_ads_image_pipeline")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     if not acct:
         return json.dumps({"success": False, "error": "account_id is required."})
@@ -4659,12 +4659,12 @@ def meta_image_pipeline(
         "meta_url": image_meta_url,
         "source_url": image_url,
         "account_id": acct,
-        "usage": f"Use image_hash='{image_hash}' in meta_create_ad_creative or meta_create_carousel_ad_creative",
+        "usage": f"Use image_hash='{image_hash}' in meta_ads_create_ad_creative or meta_ads_create_carousel_ad_creative",
     })
 
 
 @mcp.tool()
-def meta_adset_matrix_builder(
+def meta_ads_adset_matrix_builder(
     campaign_id: str,
     creative_id: str,
     adsets: str,
@@ -4698,7 +4698,7 @@ def meta_adset_matrix_builder(
         account_id: Ad account ID. Leave blank to use META_AD_ACCOUNT_ID from .env.
         dry_run: If True, return the full creation plan WITHOUT executing. Use for confirmation.
     """
-    if (err := require_editor("meta_adset_matrix_builder")): return err
+    if (err := require_editor("meta_ads_adset_matrix_builder")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     if not acct:
         return json.dumps({"error": "account_id is required."})
@@ -4835,7 +4835,7 @@ def meta_adset_matrix_builder(
 
 
 @mcp.tool()
-def meta_lead_export(
+def meta_ads_lead_export(
     page_id: str,
     form_ids: str = "",
     since: str = "",
@@ -4979,7 +4979,7 @@ def meta_lead_export(
 
 
 @mcp.tool()
-def meta_cross_account_report(
+def meta_ads_cross_account_report(
     account_ids: str,
     start_date: str = "",
     end_date: str = "",
@@ -5097,7 +5097,7 @@ def meta_cross_account_report(
 
 
 @mcp.tool()
-def meta_frequency_watcher(
+def meta_ads_frequency_watcher(
     frequency_threshold: float = 3.0,
     start_date: str = "",
     end_date: str = "",
@@ -5178,9 +5178,9 @@ def meta_frequency_watcher(
             "recommendation": recommendation,
             "reason": reason,
             "next_steps": {
-                "pause": f"Call meta_update_status(object_id='{c.get('campaign_id','')}', object_type='campaign', status='PAUSED')",
-                "refresh_creative": "Create new creative variant with meta_create_ad_creative, then update ad",
-                "reduce_budget": f"Call meta_update_budget(campaign_id='{c.get('campaign_id','')}', daily_budget='<lower_amount>')",
+                "pause": f"Call meta_ads_update_status(object_id='{c.get('campaign_id','')}', object_type='campaign', status='PAUSED')",
+                "refresh_creative": "Create new creative variant with meta_ads_create_ad_creative, then update ad",
+                "reduce_budget": f"Call meta_ads_update_budget(campaign_id='{c.get('campaign_id','')}', daily_budget='<lower_amount>')",
             }.get(recommendation, ""),
         })
 
@@ -5210,7 +5210,7 @@ def meta_frequency_watcher(
 
 
 @mcp.tool()
-def meta_create_automated_rule(
+def meta_ads_create_automated_rule(
     name: str,
     rule_type: str,
     evaluation_spec: str,
@@ -5241,7 +5241,7 @@ def meta_create_automated_rule(
         trigger_spec: JSON string for trigger-based rules. Example:
           '{"type":"STATS_CHANGE","trigger_filters":[{"field":"cost_per_result","operator":">","value":50}]}'
     """
-    if (err := require_editor("meta_create_automated_rule")): return err
+    if (err := require_editor("meta_ads_create_automated_rule")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     data: dict = {
         "name": name,
@@ -5260,7 +5260,7 @@ def meta_create_automated_rule(
 
 
 @mcp.tool()
-def meta_list_automated_rules(
+def meta_ads_list_automated_rules(
     account_id: str = "",
     status: str = "ENABLED",
 ) -> str:
@@ -5281,7 +5281,7 @@ def meta_list_automated_rules(
 
 
 @mcp.tool()
-def meta_update_automated_rule(
+def meta_ads_update_automated_rule(
     rule_id: str,
     status: str = "",
     name: str = "",
@@ -5293,7 +5293,7 @@ def meta_update_automated_rule(
         status: 'ENABLED' or 'DISABLED'.
         name: New name for the rule.
     """
-    if (err := require_editor("meta_update_automated_rule")): return err
+    if (err := require_editor("meta_ads_update_automated_rule")): return err
     data: dict = {}
     if status:
         data["status"] = status
@@ -5308,13 +5308,13 @@ def meta_update_automated_rule(
 
 
 @mcp.tool()
-def meta_delete_automated_rule(rule_id: str) -> str:
+def meta_ads_delete_automated_rule(rule_id: str) -> str:
     """Delete an automated rule permanently.
 
     Args:
         rule_id: Automated rule ID to delete (required).
     """
-    if (err := require_editor("meta_delete_automated_rule")): return err
+    if (err := require_editor("meta_ads_delete_automated_rule")): return err
     result = _delete(rule_id)
     if "error" in result:
         return json.dumps({"success": False, "error": result["error"]})
@@ -5322,7 +5322,7 @@ def meta_delete_automated_rule(rule_id: str) -> str:
 
 
 @mcp.tool()
-def meta_create_ab_test(
+def meta_ads_create_ab_test(
     name: str,
     business_id: str,
     start_time: str,
@@ -5350,7 +5350,7 @@ def meta_create_ab_test(
         confidence_level: Statistical confidence level 0-1. Default 0.95.
         account_id: Ad account ID for context. Leave blank for .env default.
     """
-    if (err := require_editor("meta_create_ab_test")): return err
+    if (err := require_editor("meta_ads_create_ab_test")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         cells_list = json.loads(cells) if isinstance(cells, str) else cells
@@ -5375,7 +5375,7 @@ def meta_create_ab_test(
 
 
 @mcp.tool()
-def meta_get_ab_test_results(study_id: str) -> str:
+def meta_ads_ab_test_results(study_id: str) -> str:
     """Get results and status of an A/B split test.
 
     Args:
@@ -5389,7 +5389,7 @@ def meta_get_ab_test_results(study_id: str) -> str:
 
 
 @mcp.tool()
-def meta_create_adset_with_dayparting(
+def meta_ads_create_adset_with_dayparting(
     name: str,
     campaign_id: str,
     lifetime_budget: int,
@@ -5423,7 +5423,7 @@ def meta_create_adset_with_dayparting(
         bid_amount: Bid cap in smallest currency unit. 0 = auto bid.
         account_id: Ad account ID. Leave blank for .env default.
     """
-    if (err := require_editor("meta_create_adset_with_dayparting")): return err
+    if (err := require_editor("meta_ads_create_adset_with_dayparting")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         schedule_list = json.loads(schedule) if isinstance(schedule, str) else schedule
@@ -5462,7 +5462,7 @@ def meta_create_adset_with_dayparting(
 
 
 @mcp.tool()
-def meta_create_advantage_plus_campaign(
+def meta_ads_create_advantage_plus_campaign(
     name: str,
     objective: str,
     budget: int,
@@ -5488,7 +5488,7 @@ def meta_create_advantage_plus_campaign(
                       'LOWEST_COST_WITH_MIN_ROAS'. Default LOWEST_COST_WITHOUT_CAP.
         account_id: Ad account ID. Leave blank for .env default.
     """
-    if (err := require_editor("meta_create_advantage_plus_campaign")): return err
+    if (err := require_editor("meta_ads_create_advantage_plus_campaign")): return err
     valid_objectives = {"OUTCOME_SALES", "OUTCOME_LEADS", "OUTCOME_APP_PROMOTION"}
     if objective not in valid_objectives:
         return json.dumps({"success": False,
@@ -5552,7 +5552,7 @@ def meta_create_advantage_plus_campaign(
 
 
 @mcp.tool()
-def meta_send_whatsapp_message(
+def meta_ads_send_whatsapp_message(
     phone_number_id: str,
     to: str,
     message_type: str = "text",
@@ -5578,7 +5578,7 @@ def meta_send_whatsapp_message(
         template_components: JSON array of template components for dynamic values.
         access_token: WhatsApp System User access token. Required — different from Meta Ads token.
     """
-    if (err := require_editor("meta_send_whatsapp_message")): return err
+    if (err := require_editor("meta_ads_send_whatsapp_message")): return err
     if not access_token:
         return json.dumps({"success": False,
                            "error": "WhatsApp requires a separate System User token with whatsapp_business_messaging permission."})
@@ -5622,7 +5622,7 @@ def meta_send_whatsapp_message(
 
 
 @mcp.tool()
-def meta_async_batch(
+def meta_ads_async_batch(
     account_id: str,
     operations: str,
     notification_uri: str = "",
@@ -5640,7 +5640,7 @@ def meta_async_batch(
                        "body":"name=Test&objective=OUTCOME_SALES&special_ad_categories=[]&status=PAUSED"}]'
         notification_uri: Optional webhook URL to call when batch completes.
     """
-    if (err := require_editor("meta_async_batch")): return err
+    if (err := require_editor("meta_ads_async_batch")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         ops = json.loads(operations) if isinstance(operations, str) else operations
@@ -5666,16 +5666,16 @@ def meta_async_batch(
         "success": True,
         "request_set_id": request_set_id,
         "operations_submitted": len(ops),
-        "how_to_check": f"Call meta_get_async_batch_status(request_set_id='{request_set_id}')",
+        "how_to_check": f"Call meta_ads_async_batch_status(request_set_id='{request_set_id}')",
     })
 
 
 @mcp.tool()
-def meta_get_async_batch_status(request_set_id: str) -> str:
+def meta_ads_async_batch_status(request_set_id: str) -> str:
     """Check the status of an async batch request.
 
     Args:
-        request_set_id: Async batch request set ID from meta_async_batch (required).
+        request_set_id: Async batch request set ID from meta_ads_async_batch (required).
     """
     result = _get(request_set_id, {
         "fields": "id,name,total_count,success_count,error_count,is_completed,requests"
@@ -5702,7 +5702,7 @@ def meta_get_async_batch_status(request_set_id: str) -> str:
 
 
 @mcp.tool()
-def meta_get_delivery_insights(
+def meta_ads_delivery_insights(
     object_id: str,
     object_type: str = "campaign",
 ) -> str:
@@ -5746,7 +5746,7 @@ def meta_get_delivery_insights(
 
 
 @mcp.tool()
-def meta_set_adset_budget_guardrails(
+def meta_ads_set_adset_budget_guardrails(
     adset_id: str,
     daily_min_spend_target: int = 0,
     daily_spend_cap: int = 0,
@@ -5768,7 +5768,7 @@ def meta_set_adset_budget_guardrails(
         lifetime_min_spend_target: Minimum lifetime spend floor (soft). 0 = no floor.
         lifetime_spend_cap: Maximum lifetime spend cap (hard). 0 = no cap.
     """
-    if (err := require_editor("meta_set_adset_budget_guardrails")): return err
+    if (err := require_editor("meta_ads_set_adset_budget_guardrails")): return err
     data: dict = {}
     if daily_min_spend_target:
         data["daily_min_spend_target"] = str(daily_min_spend_target)
@@ -5788,7 +5788,7 @@ def meta_set_adset_budget_guardrails(
 
 
 @mcp.tool()
-def meta_update_adset_budget(
+def meta_ads_update_adset_budget(
     adset_id: str,
     daily_budget: int = 0,
     lifetime_budget: int = 0,
@@ -5802,7 +5802,7 @@ def meta_update_adset_budget(
         lifetime_budget: New lifetime budget in smallest currency unit. 0 = no change.
         bid_amount: New bid cap in smallest currency unit. 0 = no change.
     """
-    if (err := require_editor("meta_update_adset_budget")): return err
+    if (err := require_editor("meta_ads_update_adset_budget")): return err
     data: dict = {}
     if daily_budget:
         data["daily_budget"] = str(daily_budget)
@@ -5819,7 +5819,7 @@ def meta_update_adset_budget(
 
 
 @mcp.tool()
-def meta_get_ad_suggestions(
+def meta_ads_ad_suggestions(
     account_id: str = "",
     objective: str = "OUTCOME_SALES",
 ) -> str:
@@ -5863,13 +5863,13 @@ def meta_get_ad_suggestions(
 
 
 @mcp.tool()
-def meta_apply_recommendation(recommendation_id: str) -> str:
+def meta_ads_apply_recommendation(recommendation_id: str) -> str:
     """Apply a Meta recommendation (e.g. budget increase, audience expansion) automatically.
 
     Args:
-        recommendation_id: Recommendation ID from meta_get_ad_suggestions (required).
+        recommendation_id: Recommendation ID from meta_ads_ad_suggestions (required).
     """
-    if (err := require_editor("meta_apply_recommendation")): return err
+    if (err := require_editor("meta_ads_apply_recommendation")): return err
     result = _post(f"{recommendation_id}/apply", {})
     if "error" in result:
         return json.dumps({"success": False, "error": result["error"]})
@@ -5877,7 +5877,7 @@ def meta_apply_recommendation(recommendation_id: str) -> str:
 
 
 @mcp.tool()
-def meta_get_account_diagnostics(account_id: str = "") -> str:
+def meta_ads_account_diagnostics(account_id: str = "") -> str:
     """Get a full diagnostic report for an ad account: spending limits, status, active campaigns,
     pixel health, and recent issues — all in one call.
 
@@ -5927,7 +5927,7 @@ def meta_get_account_diagnostics(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_sync_batch(operations: str) -> str:
+def meta_ads_sync_batch(operations: str) -> str:
     """Run up to 50 Graph API calls in a single synchronous batch request.
 
     Faster than N individual calls for dependent chains. Supports JSONPath references
@@ -5944,7 +5944,7 @@ def meta_sync_batch(operations: str) -> str:
     except json.JSONDecodeError as e:
         return json.dumps({"success": False, "error": f"Invalid operations JSON: {e}"})
     if len(ops) > 50:
-        return json.dumps({"success": False, "error": "Sync batch max is 50 operations. Use meta_async_batch for larger batches."})
+        return json.dumps({"success": False, "error": "Sync batch max is 50 operations. Use meta_ads_async_batch for larger batches."})
 
     resp = requests.post(
         "https://graph.facebook.com/",
@@ -5983,7 +5983,7 @@ def meta_sync_batch(operations: str) -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_advantage_plus_creative(
+def meta_ads_create_advantage_plus_creative(
     account_id: str,
     page_id: str,
     asset_feed_spec: str,
@@ -6008,7 +6008,7 @@ def meta_create_advantage_plus_creative(
         degrees_of_freedom: Optional JSON to enable/disable specific transformations.
                             Example: '{"creative_features_spec":{"standard_enhancements":{"enroll_status":"OPT_IN"}}}'
     """
-    if (err := require_editor("meta_create_advantage_plus_creative")): return err
+    if (err := require_editor("meta_ads_create_advantage_plus_creative")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         afs = json.loads(asset_feed_spec)
@@ -6036,7 +6036,7 @@ def meta_create_advantage_plus_creative(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_boost_existing_post(
+def meta_ads_boost_existing_post(
     account_id: str,
     page_id: str,
     post_id: str,
@@ -6057,7 +6057,7 @@ def meta_boost_existing_post(
         adset_id: Ad set to place the ad in.
         ad_name: Name for the ad (default: 'Boosted Post').
     """
-    if (err := require_editor("meta_boost_existing_post")): return err
+    if (err := require_editor("meta_ads_boost_existing_post")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
 
     # Build the story_id — Meta format is {page_id}_{post_id}
@@ -6094,7 +6094,7 @@ def meta_boost_existing_post(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_leadgen_form(
+def meta_ads_create_leadgen_form(
     page_id: str,
     name: str,
     questions: str,
@@ -6123,7 +6123,7 @@ def meta_create_leadgen_form(
         context_card_title: Optional intro card title shown before the form.
         context_card_content: Optional intro card body text.
     """
-    if (err := require_editor("meta_create_leadgen_form")): return err
+    if (err := require_editor("meta_ads_create_leadgen_form")): return err
     try:
         qs = json.loads(questions)
     except Exception as e:
@@ -6159,7 +6159,7 @@ def meta_create_leadgen_form(
 
 
 @mcp.tool()
-def meta_list_leadgen_forms(page_id: str, page_access_token: str) -> str:
+def meta_ads_list_leadgen_forms(page_id: str, page_access_token: str) -> str:
     """List all lead gen forms for a Facebook Page.
 
     Args:
@@ -6184,7 +6184,7 @@ def meta_list_leadgen_forms(page_id: str, page_access_token: str) -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_instagram_story(
+def meta_ads_create_instagram_story(
     ig_user_id: str,
     media_type: str,
     media_url: str,
@@ -6204,7 +6204,7 @@ def meta_create_instagram_story(
         link_url: Optional URL for the link sticker (swipe-up equivalent).
         sticker_data: Optional JSON for custom sticker overlays.
     """
-    if (err := require_editor("meta_create_instagram_story")): return err
+    if (err := require_editor("meta_ads_create_instagram_story")): return err
     # Step 1 — create container
     container_params: dict = {
         "media_type": "STORIES",
@@ -6258,7 +6258,7 @@ def meta_create_instagram_story(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_reach_frequency_prediction(
+def meta_ads_reach_frequency_prediction(
     account_id: str,
     start_time: str,
     end_time: str,
@@ -6309,7 +6309,7 @@ def meta_get_reach_frequency_prediction(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_publisher_block_lists(account_id: str = "") -> str:
+def meta_ads_publisher_block_lists(account_id: str = "") -> str:
     """List all publisher block lists for an ad account (Brand Safety).
 
     Args:
@@ -6320,7 +6320,7 @@ def meta_get_publisher_block_lists(account_id: str = "") -> str:
 
 
 @mcp.tool()
-def meta_create_publisher_block_list(
+def meta_ads_create_publisher_block_list(
     name: str,
     publisher_urls: str,
     account_id: str = "",
@@ -6333,7 +6333,7 @@ def meta_create_publisher_block_list(
         publisher_urls: JSON array of domain strings to block.
                         Example: '["example.com","badsite.net"]'
     """
-    if (err := require_editor("meta_create_publisher_block_list")): return err
+    if (err := require_editor("meta_ads_create_publisher_block_list")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         urls = json.loads(publisher_urls)
@@ -6343,7 +6343,7 @@ def meta_create_publisher_block_list(
 
 
 @mcp.tool()
-def meta_get_brand_safety_controls(account_id: str = "") -> str:
+def meta_ads_brand_safety_controls(account_id: str = "") -> str:
     """Get current brand safety / content suitability controls for an ad account.
 
     Returns: content_delivery_report, inventory_filter settings.
@@ -6362,7 +6362,7 @@ def meta_get_brand_safety_controls(account_id: str = "") -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_live_video(
+def meta_ads_create_live_video(
     page_id: str,
     page_access_token: str,
     title: str = "",
@@ -6372,7 +6372,7 @@ def meta_create_live_video(
     """Create a live video broadcast on a Facebook Page. Returns stream_url and stream_key.
 
     After creating, use the returned stream_url to start streaming (e.g. OBS, ffmpeg).
-    Then call meta_publish_live_video to make it public.
+    Then call meta_ads_publish_live_video to make it public.
 
     Args:
         page_id: Facebook Page ID.
@@ -6381,7 +6381,7 @@ def meta_create_live_video(
         description: Live video description.
         status: UNPUBLISHED (default, stream privately first) or LIVE_NOW.
     """
-    if (err := require_editor("meta_create_live_video")): return err
+    if (err := require_editor("meta_ads_create_live_video")): return err
     payload: dict = {
         "status": status,
         "access_token": page_access_token,
@@ -6408,17 +6408,17 @@ def meta_create_live_video(
 
 
 @mcp.tool()
-def meta_publish_live_video(
+def meta_ads_publish_live_video(
     live_video_id: str,
     page_access_token: str,
 ) -> str:
     """Publish (go live) or end a live video broadcast.
 
     Args:
-        live_video_id: The live video ID returned by meta_create_live_video.
+        live_video_id: The live video ID returned by meta_ads_create_live_video.
         page_access_token: Page-level access token.
     """
-    if (err := require_editor("meta_publish_live_video")): return err
+    if (err := require_editor("meta_ads_publish_live_video")): return err
     resp = requests.post(
         f"{GRAPH_BASE}/{live_video_id}",
         json={"status": "LIVE", "access_token": page_access_token},
@@ -6430,7 +6430,7 @@ def meta_publish_live_video(
 
 
 @mcp.tool()
-def meta_end_live_video(
+def meta_ads_end_live_video(
     live_video_id: str,
     page_access_token: str,
 ) -> str:
@@ -6440,7 +6440,7 @@ def meta_end_live_video(
         live_video_id: The live video ID.
         page_access_token: Page-level access token.
     """
-    if (err := require_editor("meta_end_live_video")): return err
+    if (err := require_editor("meta_ads_end_live_video")): return err
     resp = requests.post(
         f"{GRAPH_BASE}/{live_video_id}",
         json={"end_live_video": True, "access_token": page_access_token},
@@ -6456,7 +6456,7 @@ def meta_end_live_video(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_get_product_feeds(catalog_id: str) -> str:
+def meta_ads_product_feeds(catalog_id: str) -> str:
     """List all product feeds in a catalog.
 
     Args:
@@ -6468,7 +6468,7 @@ def meta_get_product_feeds(catalog_id: str) -> str:
 
 
 @mcp.tool()
-def meta_create_product_feed(
+def meta_ads_create_product_feed(
     catalog_id: str,
     name: str,
     feed_url: str,
@@ -6485,7 +6485,7 @@ def meta_create_product_feed(
                   Example: '{"interval":"DAILY","url":"https://...","hour":"6"}'
         update_schedule: Optional JSON for incremental update schedule.
     """
-    if (err := require_editor("meta_create_product_feed")): return err
+    if (err := require_editor("meta_ads_create_product_feed")): return err
     payload: dict = {"name": name}
     if schedule:
         try:
@@ -6506,22 +6506,22 @@ def meta_create_product_feed(
 
 
 @mcp.tool()
-def meta_upload_product_feed(
+def meta_ads_upload_product_feed(
     feed_id: str,
     feed_url: str,
 ) -> str:
     """Trigger an immediate upload/ingestion of a product feed.
 
     Args:
-        feed_id: Product feed ID (from meta_get_product_feeds).
+        feed_id: Product feed ID (from meta_ads_product_feeds).
         feed_url: Public URL to fetch the feed from.
     """
-    if (err := require_editor("meta_upload_product_feed")): return err
+    if (err := require_editor("meta_ads_upload_product_feed")): return err
     return json.dumps(_post(f"{feed_id}/uploads", {"url": feed_url}))
 
 
 @mcp.tool()
-def meta_update_catalog_product(
+def meta_ads_update_catalog_product(
     catalog_id: str,
     retailer_id: str,
     updates: str,
@@ -6537,7 +6537,7 @@ def meta_update_catalog_product(
                  url, image_url, condition (new/refurbished/used).
                  Example: '{"price":9900,"availability":"in stock"}'
     """
-    if (err := require_editor("meta_update_catalog_product")): return err
+    if (err := require_editor("meta_ads_update_catalog_product")): return err
     try:
         upd = json.loads(updates)
     except Exception as e:
@@ -6552,7 +6552,7 @@ def meta_update_catalog_product(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_set_page_cta(
+def meta_ads_set_page_cta(
     page_id: str,
     page_access_token: str,
     cta_type: str,
@@ -6569,7 +6569,7 @@ def meta_set_page_cta(
         cta_value: Associated value — phone number for CALL_NOW, URL for SHOP_NOW/SIGN_UP/etc.
                    For SEND_MESSAGE leave empty (opens Messenger).
     """
-    if (err := require_editor("meta_set_page_cta")): return err
+    if (err := require_editor("meta_ads_set_page_cta")): return err
     payload: dict = {
         "type": cta_type,
         "access_token": page_access_token,
@@ -6594,7 +6594,7 @@ def meta_set_page_cta(
 
 
 @mcp.tool()
-def meta_get_page_cta(page_id: str, page_access_token: str) -> str:
+def meta_ads_page_cta(page_id: str, page_access_token: str) -> str:
     """Get the current CTA button set on a Facebook Page.
 
     Args:
@@ -6616,7 +6616,7 @@ def meta_get_page_cta(page_id: str, page_access_token: str) -> str:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_list_system_users(business_id: str) -> str:
+def meta_ads_list_system_users(business_id: str) -> str:
     """List all system users in a Business Manager.
 
     System users are non-human accounts used for API integrations and automation.
@@ -6630,7 +6630,7 @@ def meta_list_system_users(business_id: str) -> str:
 
 
 @mcp.tool()
-def meta_create_system_user(
+def meta_ads_create_system_user(
     business_id: str,
     name: str,
     role: str = "EMPLOYEE",
@@ -6642,7 +6642,7 @@ def meta_create_system_user(
         name: Display name for the system user.
         role: ADMIN or EMPLOYEE. Default: EMPLOYEE.
     """
-    if (err := require_editor("meta_create_system_user")): return err
+    if (err := require_editor("meta_ads_create_system_user")): return err
     return json.dumps(_post(f"{business_id}/system_users", {
         "name": name,
         "role": role,
@@ -6650,7 +6650,7 @@ def meta_create_system_user(
 
 
 @mcp.tool()
-def meta_get_system_user_token(
+def meta_ads_system_user_token(
     system_user_id: str,
     app_id: str,
     app_secret: str,
@@ -6666,7 +6666,7 @@ def meta_get_system_user_token(
         app_secret: Facebook App Secret.
         scope: Comma-separated permissions to request.
     """
-    if (err := require_editor("meta_get_system_user_token")): return err
+    if (err := require_editor("meta_ads_system_user_token")): return err
     return json.dumps(_post(f"{system_user_id}/access_tokens", {
         "business_app": app_id,
         "appsecret_proof": _sha256(f"{app_secret}"),  # simplified; production needs HMAC
@@ -6675,7 +6675,7 @@ def meta_get_system_user_token(
 
 
 @mcp.tool()
-def meta_assign_system_user_to_account(
+def meta_ads_assign_system_user_to_account(
     account_id: str,
     system_user_id: str,
     role: str = "ANALYST",
@@ -6687,7 +6687,7 @@ def meta_assign_system_user_to_account(
         system_user_id: System user ID.
         role: ADMIN, ADVERTISER, or ANALYST. Default: ANALYST.
     """
-    if (err := require_editor("meta_assign_system_user_to_account")): return err
+    if (err := require_editor("meta_ads_assign_system_user_to_account")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     return json.dumps(_post(f"{acct}/users", {
         "user": system_user_id,
@@ -6700,7 +6700,7 @@ def meta_assign_system_user_to_account(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_create_saved_audience(
+def meta_ads_create_saved_audience(
     name: str,
     targeting: str,
     account_id: str = "",
@@ -6718,7 +6718,7 @@ def meta_create_saved_audience(
               "interests":[{"id":"6003139266461","name":"Real estate"}]}'
         account_id: Ad account ID (e.g. act_123456). Leave blank for default.
     """
-    if (err := require_editor("meta_create_saved_audience")): return err
+    if (err := require_editor("meta_ads_create_saved_audience")): return err
     acct = (account_id if account_id.startswith("act_") else f"act_{account_id}") if account_id else _account_id()
     try:
         tgt = json.loads(targeting) if isinstance(targeting, str) else targeting
@@ -6731,7 +6731,7 @@ def meta_create_saved_audience(
 
 
 @mcp.tool()
-def meta_upload_enhanced_conversions(
+def meta_ads_upload_enhanced_conversions(
     pixel_id: str,
     events: str,
     upload_tag: str = "",
@@ -6765,7 +6765,7 @@ def meta_upload_enhanced_conversions(
         upload_tag: Optional label to identify this upload batch in reporting.
         account_id: Ad account ID. Leave blank for default.
     """
-    if (err := require_editor("meta_upload_enhanced_conversions")): return err
+    if (err := require_editor("meta_ads_upload_enhanced_conversions")): return err
     import hashlib
 
     def _sha256(val: str) -> str:
@@ -6989,7 +6989,7 @@ def _format_activity(ev: dict) -> dict:
 
 
 @mcp.tool()
-def meta_get_campaign_change_history(
+def meta_ads_campaign_change_history(
     campaign_id: str,
     account_id: str = "",
     start_date: str = "",
@@ -7037,7 +7037,7 @@ def meta_get_campaign_change_history(
 
 
 @mcp.tool()
-def meta_get_adset_change_history(
+def meta_ads_adset_change_history(
     adset_id: str,
     account_id: str = "",
     start_date: str = "",
@@ -7085,7 +7085,7 @@ def meta_get_adset_change_history(
 
 
 @mcp.tool()
-def meta_get_ad_change_history(
+def meta_ads_ad_change_history(
     ad_id: str,
     account_id: str = "",
     start_date: str = "",
@@ -7132,7 +7132,7 @@ def meta_get_ad_change_history(
 
 
 @mcp.tool()
-def meta_get_account_change_history(
+def meta_ads_account_change_history(
     account_id: str = "",
     start_date: str = "",
     end_date: str = "",
@@ -7201,7 +7201,7 @@ def meta_get_account_change_history(
 
 
 @mcp.tool()
-def meta_check_payment_errors(
+def meta_ads_check_payment_errors(
     account_id: str = "",
 ) -> str:
     """Check if a Meta Ads account has any active payment errors or billing issues.
@@ -7289,12 +7289,12 @@ def meta_check_payment_errors(
 
 
 @mcp.tool()
-def meta_bulk_payment_check(
+def meta_ads_bulk_payment_check(
     account_ids: str,
 ) -> str:
     """Check payment errors across multiple Meta Ads accounts at once.
 
-    Runs meta_check_payment_errors on each account with a 0.5s delay between
+    Runs meta_ads_check_payment_errors on each account with a 0.5s delay between
     calls to respect rate limits. Returns a summary of all issues found.
 
     Args:
@@ -7313,7 +7313,7 @@ def meta_bulk_payment_check(
 
     for acct in ids:
         try:
-            raw = meta_check_payment_errors(account_id=acct)
+            raw = meta_ads_check_payment_errors(account_id=acct)
             data = json.loads(raw)
         except Exception as exc:
             data = {"account_id": acct, "has_payment_error": True, "severity": "critical",
@@ -7348,7 +7348,7 @@ def meta_bulk_payment_check(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def meta_find_account(
+def meta_ads_find_account(
     query: str,
     user_id: str = "me",
     business_id: str = "",
@@ -7475,7 +7475,7 @@ def meta_find_account(
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def generate_meta_dashboard(
+def meta_ads_dashboard(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -8129,7 +8129,7 @@ const DEMO_DS      = {demo_datasets};
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def generate_meta_pdf(
+def meta_ads_pdf(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -8384,7 +8384,7 @@ def generate_meta_pdf(
 
 
 @mcp.tool()
-def generate_meta_dashboard_figma(
+def meta_ads_dashboard_figma(
     start_date: str = "",
     end_date: str = "",
     account_id: str = "",
@@ -8392,7 +8392,7 @@ def generate_meta_dashboard_figma(
 ) -> str:
     """Generate a premium Figma-level Meta Ads dashboard as an HTML artifact.
 
-    Same data as generate_meta_dashboard but with a completely redesigned UI:
+    Same data as meta_ads_dashboard but with a completely redesigned UI:
     glassmorphism cards, Inter font, gradient glow KPIs, premium typography,
     animated counters, and a dark-navy design system.
 
@@ -9093,7 +9093,7 @@ const DEMO_DS      = {demo_datasets};
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def render_report_pdf(
+def meta_ads_render_report_pdf(
     title: str,
     metrics: str = "[]",
     table_headers: str = "[]",
@@ -9268,7 +9268,7 @@ def render_report_pdf(
 
 
 @mcp.tool()
-def render_report_html(
+def meta_ads_render_report_html(
     title: str,
     metrics: str = "[]",
     table_headers: str = "[]",

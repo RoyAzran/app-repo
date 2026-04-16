@@ -112,7 +112,7 @@ def _range_to_grid(spreadsheet_id: str, sheet_id: int, range_a1: Optional[str] =
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def create_spreadsheet(title: str, sheet_names: Optional[List[str]] = None) -> Dict:
+def sheets_create_spreadsheet(title: str, sheet_names: Optional[List[str]] = None) -> Dict:
     """
     Create a new Google Spreadsheet.
 
@@ -123,8 +123,7 @@ def create_spreadsheet(title: str, sheet_names: Optional[List[str]] = None) -> D
     Returns:
         Dict with spreadsheetId and URL.
     """
-    if (err := require_editor("create_spreadsheet")): return err
-    drive = _drive_service()
+    if (err := require_editor("sheets_create_spreadsheet")): return err
     sheets = _sheets_service()
     body = {"properties": {"title": title}}
     if sheet_names:
@@ -139,21 +138,21 @@ def create_spreadsheet(title: str, sheet_names: Optional[List[str]] = None) -> D
 
 
 @mcp.tool()
-def delete_spreadsheet(spreadsheet_id: str) -> Dict:
+def sheets_delete_spreadsheet(spreadsheet_id: str) -> Dict:
     """
     Delete a spreadsheet permanently from Google Drive.
 
     Args:
         spreadsheet_id: The spreadsheet ID.
     """
-    if (err := require_editor("delete_spreadsheet")): return err
+    if (err := require_editor("sheets_delete_spreadsheet")): return err
     drive = _drive_service()
     drive.files().delete(fileId=spreadsheet_id).execute()
     return {"success": True, "deleted": spreadsheet_id}
 
 
 @mcp.tool()
-def copy_spreadsheet(spreadsheet_id: str, new_title: str) -> Dict:
+def sheets_copy_spreadsheet(spreadsheet_id: str, new_title: str) -> Dict:
     """
     Copy an entire spreadsheet to a new file.
 
@@ -161,7 +160,7 @@ def copy_spreadsheet(spreadsheet_id: str, new_title: str) -> Dict:
         spreadsheet_id: Source spreadsheet ID.
         new_title: Name for the new spreadsheet.
     """
-    if (err := require_editor("copy_spreadsheet")): return err
+    if (err := require_editor("sheets_copy_spreadsheet")): return err
     drive = _drive_service()
     result = drive.files().copy(fileId=spreadsheet_id, body={"name": new_title}).execute()
     new_id = result['id']
@@ -173,7 +172,7 @@ def copy_spreadsheet(spreadsheet_id: str, new_title: str) -> Dict:
 
 
 @mcp.tool()
-def get_spreadsheet_info(spreadsheet_id: str) -> Dict:
+def sheets_get_spreadsheet_info(spreadsheet_id: str) -> Dict:
     """
     Get full metadata about a spreadsheet (sheets, properties, named ranges, etc.).
 
@@ -206,7 +205,7 @@ def get_spreadsheet_info(spreadsheet_id: str) -> Dict:
 
 
 @mcp.tool()
-def list_spreadsheets(folder_id: Optional[str] = None, search_query: Optional[str] = None) -> List[Dict]:
+def sheets_list_spreadsheets(folder_id: Optional[str] = None, search_query: Optional[str] = None) -> List[Dict]:
     """
     List Google Spreadsheets in Drive (optionally filtered by folder or search).
 
@@ -225,7 +224,7 @@ def list_spreadsheets(folder_id: Optional[str] = None, search_query: Optional[st
 
 
 @mcp.tool()
-def share_spreadsheet(spreadsheet_id: str, email: str, role: str = "reader") -> Dict:
+def sheets_share_spreadsheet(spreadsheet_id: str, email: str, role: str = "reader") -> Dict:
     """
     Share a spreadsheet with a user.
 
@@ -234,7 +233,7 @@ def share_spreadsheet(spreadsheet_id: str, email: str, role: str = "reader") -> 
         email: Email address to share with.
         role: Permission role: 'reader', 'commenter', or 'writer'.
     """
-    if (err := require_editor("share_spreadsheet")): return err
+    if (err := require_editor("sheets_share_spreadsheet")): return err
     drive = _drive_service()
     perm = {"type": "user", "role": role, "emailAddress": email}
     result = drive.permissions().create(
@@ -250,7 +249,7 @@ def share_spreadsheet(spreadsheet_id: str, email: str, role: str = "reader") -> 
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def list_sheets(spreadsheet_id: str) -> List[Dict]:
+def sheets_list_sheets(spreadsheet_id: str) -> List[Dict]:
     """
     List all sheets/tabs in a spreadsheet.
 
@@ -271,7 +270,7 @@ def list_sheets(spreadsheet_id: str) -> List[Dict]:
 
 
 @mcp.tool()
-def create_sheet(spreadsheet_id: str, title: str, index: Optional[int] = None,
+def sheets_create_sheet(spreadsheet_id: str, title: str, index: Optional[int] = None,
                  rows: int = 1000, columns: int = 26) -> Dict:
     """
     Add a new sheet/tab to an existing spreadsheet.
@@ -283,7 +282,7 @@ def create_sheet(spreadsheet_id: str, title: str, index: Optional[int] = None,
         rows: Initial row count (default 1000).
         columns: Initial column count (default 26).
     """
-    if (err := require_editor("create_sheet")): return err
+    if (err := require_editor("sheets_create_sheet")): return err
     sheets = _sheets_service()
     props = {"title": title, "gridProperties": {"rowCount": rows, "columnCount": columns}}
     if index is not None:
@@ -296,7 +295,7 @@ def create_sheet(spreadsheet_id: str, title: str, index: Optional[int] = None,
 
 
 @mcp.tool()
-def delete_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
+def sheets_delete_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
     """
     Delete a sheet/tab from a spreadsheet.
 
@@ -304,7 +303,7 @@ def delete_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
         spreadsheet_id: The spreadsheet ID.
         sheet_name: Name of the sheet to delete.
     """
-    if (err := require_editor("delete_sheet")): return err
+    if (err := require_editor("sheets_delete_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -317,7 +316,7 @@ def delete_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
 
 
 @mcp.tool()
-def rename_sheet(spreadsheet_id: str, old_name: str, new_name: str) -> Dict:
+def sheets_rename_sheet(spreadsheet_id: str, old_name: str, new_name: str) -> Dict:
     """
     Rename a sheet/tab.
 
@@ -326,7 +325,7 @@ def rename_sheet(spreadsheet_id: str, old_name: str, new_name: str) -> Dict:
         old_name: Current sheet name.
         new_name: New sheet name.
     """
-    if (err := require_editor("rename_sheet")): return err
+    if (err := require_editor("sheets_rename_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, old_name)
     if sheet_id is None:
@@ -342,7 +341,7 @@ def rename_sheet(spreadsheet_id: str, old_name: str, new_name: str) -> Dict:
 
 
 @mcp.tool()
-def copy_sheet(spreadsheet_id: str, sheet_name: str, destination_spreadsheet_id: Optional[str] = None) -> Dict:
+def sheets_copy_sheet(spreadsheet_id: str, sheet_name: str, destination_spreadsheet_id: Optional[str] = None) -> Dict:
     """
     Copy a sheet to the same or a different spreadsheet.
 
@@ -351,7 +350,7 @@ def copy_sheet(spreadsheet_id: str, sheet_name: str, destination_spreadsheet_id:
         sheet_name: Name of the sheet to copy.
         destination_spreadsheet_id: Target spreadsheet ID (defaults to same spreadsheet).
     """
-    if (err := require_editor("copy_sheet")): return err
+    if (err := require_editor("sheets_copy_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -366,7 +365,7 @@ def copy_sheet(spreadsheet_id: str, sheet_name: str, destination_spreadsheet_id:
 
 
 @mcp.tool()
-def move_sheet(spreadsheet_id: str, sheet_name: str, new_index: int) -> Dict:
+def sheets_move_sheet(spreadsheet_id: str, sheet_name: str, new_index: int) -> Dict:
     """
     Reorder/move a sheet to a different position.
 
@@ -375,7 +374,7 @@ def move_sheet(spreadsheet_id: str, sheet_name: str, new_index: int) -> Dict:
         sheet_name: Name of the sheet.
         new_index: New 0-based index position.
     """
-    if (err := require_editor("move_sheet")): return err
+    if (err := require_editor("sheets_move_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -391,7 +390,7 @@ def move_sheet(spreadsheet_id: str, sheet_name: str, new_index: int) -> Dict:
 
 
 @mcp.tool()
-def set_sheet_tab_color(spreadsheet_id: str, sheet_name: str, color_hex: str) -> Dict:
+def sheets_set_sheet_tab_color(spreadsheet_id: str, sheet_name: str, color_hex: str) -> Dict:
     """
     Set the color of a sheet tab.
 
@@ -400,7 +399,7 @@ def set_sheet_tab_color(spreadsheet_id: str, sheet_name: str, color_hex: str) ->
         sheet_name: Name of the sheet.
         color_hex: Color in #RRGGBB format (e.g. '#FF0000' for red).
     """
-    if (err := require_editor("set_sheet_tab_color")): return err
+    if (err := require_editor("sheets_set_sheet_tab_color")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -419,9 +418,9 @@ def set_sheet_tab_color(spreadsheet_id: str, sheet_name: str, color_hex: str) ->
 
 
 @mcp.tool()
-def hide_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
+def sheets_hide_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
     """Hide a sheet tab (it remains in the spreadsheet but is not visible)."""
-    if (err := require_editor("hide_sheet")): return err
+    if (err := require_editor("sheets_hide_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -437,9 +436,9 @@ def hide_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
 
 
 @mcp.tool()
-def show_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
+def sheets_show_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
     """Show/unhide a previously hidden sheet tab."""
-    if (err := require_editor("show_sheet")): return err
+    if (err := require_editor("sheets_show_sheet")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -459,7 +458,7 @@ def show_sheet(spreadsheet_id: str, sheet_name: str) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def get_sheet_data(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
+def sheets_get_sheet_data(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
     """
     Read values from a sheet.
 
@@ -485,7 +484,7 @@ def get_sheet_data(spreadsheet_id: str, sheet: str, range: Optional[str] = None)
 
 
 @mcp.tool()
-def get_sheet_formulas(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
+def sheets_get_sheet_formulas(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
     """
     Read raw formulas (not computed values) from a sheet.
 
@@ -509,7 +508,7 @@ def get_sheet_formulas(spreadsheet_id: str, sheet: str, range: Optional[str] = N
 
 
 @mcp.tool()
-def get_multiple_ranges(spreadsheet_id: str, ranges: List[str]) -> List[Dict]:
+def sheets_get_multiple_ranges(spreadsheet_id: str, ranges: List[str]) -> List[Dict]:
     """
     Read multiple ranges from a spreadsheet in one API call.
 
@@ -529,7 +528,7 @@ def get_multiple_ranges(spreadsheet_id: str, ranges: List[str]) -> List[Dict]:
 
 
 @mcp.tool()
-def get_cell_formatting(spreadsheet_id: str, sheet: str, range: str) -> Dict:
+def sheets_get_cell_formatting(spreadsheet_id: str, sheet: str, range: str) -> Dict:
     """
     Get formatting details for a cell range (font, colors, borders, number format, etc.).
 
@@ -549,7 +548,7 @@ def get_cell_formatting(spreadsheet_id: str, sheet: str, range: str) -> Dict:
 
 
 @mcp.tool()
-def find_in_spreadsheet(spreadsheet_id: str, search_text: str,
+def sheets_find_in_spreadsheet(spreadsheet_id: str, search_text: str,
                         sheet: Optional[str] = None,
                         match_case: bool = False,
                         match_entire_cell: bool = False) -> List[Dict]:
@@ -597,7 +596,7 @@ def find_in_spreadsheet(spreadsheet_id: str, search_text: str,
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def update_cells(spreadsheet_id: str, sheet: str, range: str,
+def sheets_update_cells(spreadsheet_id: str, sheet: str, range: str,
                  values: List[List[Any]],
                  value_input_option: str = "USER_ENTERED") -> Dict:
     """
@@ -610,7 +609,7 @@ def update_cells(spreadsheet_id: str, sheet: str, range: str,
         values: 2D list of values. Use formulas like '=SUM(A1:A5)' as strings.
         value_input_option: 'USER_ENTERED' (parses formulas/types) or 'RAW' (literal strings).
     """
-    if (err := require_editor("update_cells")): return err
+    if (err := require_editor("sheets_update_cells")): return err
     sheets = _sheets_service()
     full_range = f"{sheet}!{range}"
     result = sheets.spreadsheets().values().update(
@@ -628,7 +627,7 @@ def update_cells(spreadsheet_id: str, sheet: str, range: str,
 
 
 @mcp.tool()
-def update_multiple_ranges(spreadsheet_id: str,
+def sheets_update_multiple_ranges(spreadsheet_id: str,
                            updates: List[Dict[str, Any]],
                            value_input_option: str = "USER_ENTERED") -> Dict:
     """
@@ -645,7 +644,7 @@ def update_multiple_ranges(spreadsheet_id: str,
             {"range": "Sheet1!B2:C3", "values": [[1, 2], [3, 4]]}
         ]
     """
-    if (err := require_editor("update_multiple_ranges")): return err
+    if (err := require_editor("sheets_update_multiple_ranges")): return err
     sheets = _sheets_service()
     data = [{"range": u["range"], "values": u["values"]} for u in updates]
     result = sheets.spreadsheets().values().batchUpdate(
@@ -660,7 +659,7 @@ def update_multiple_ranges(spreadsheet_id: str,
 
 
 @mcp.tool()
-def append_rows(spreadsheet_id: str, sheet: str, values: List[List[Any]],
+def sheets_append_rows(spreadsheet_id: str, sheet: str, values: List[List[Any]],
                 value_input_option: str = "USER_ENTERED",
                 insert_data_option: str = "INSERT_ROWS") -> Dict:
     """
@@ -673,7 +672,7 @@ def append_rows(spreadsheet_id: str, sheet: str, values: List[List[Any]],
         value_input_option: 'USER_ENTERED' or 'RAW'.
         insert_data_option: 'INSERT_ROWS' (adds new rows) or 'OVERWRITE' (overwrites existing).
     """
-    if (err := require_editor("append_rows")): return err
+    if (err := require_editor("sheets_append_rows")): return err
     sheets = _sheets_service()
     result = sheets.spreadsheets().values().append(
         spreadsheetId=spreadsheet_id,
@@ -691,7 +690,7 @@ def append_rows(spreadsheet_id: str, sheet: str, values: List[List[Any]],
 
 
 @mcp.tool()
-def clear_range(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
+def sheets_clear_range(spreadsheet_id: str, sheet: str, range: Optional[str] = None) -> Dict:
     """
     Clear values from a range (keeps formatting).
 
@@ -700,7 +699,7 @@ def clear_range(spreadsheet_id: str, sheet: str, range: Optional[str] = None) ->
         sheet: Sheet name.
         range: A1 range. If omitted, clears entire sheet.
     """
-    if (err := require_editor("clear_range")): return err
+    if (err := require_editor("sheets_clear_range")): return err
     sheets = _sheets_service()
     full_range = f"{sheet}!{range}" if range else sheet
     result = sheets.spreadsheets().values().clear(
@@ -712,7 +711,7 @@ def clear_range(spreadsheet_id: str, sheet: str, range: Optional[str] = None) ->
 
 
 @mcp.tool()
-def copy_range(spreadsheet_id: str, source_sheet: str, source_range: str,
+def sheets_copy_range(spreadsheet_id: str, source_sheet: str, source_range: str,
                dest_sheet: str, dest_range: str,
                paste_type: str = "PASTE_NORMAL") -> Dict:
     """
@@ -730,7 +729,7 @@ def copy_range(spreadsheet_id: str, source_sheet: str, source_range: str,
             'PASTE_FORMAT' - formatting only,
             'PASTE_FORMULA' - formulas only.
     """
-    if (err := require_editor("copy_range")): return err
+    if (err := require_editor("sheets_copy_range")): return err
     sheets = _sheets_service()
     src_sheet_id = _get_sheet_id(sheets, spreadsheet_id, source_sheet)
     dst_sheet_id = _get_sheet_id(sheets, spreadsheet_id, dest_sheet)
@@ -755,7 +754,7 @@ def copy_range(spreadsheet_id: str, source_sheet: str, source_range: str,
 
 
 @mcp.tool()
-def move_range(spreadsheet_id: str, source_sheet: str, source_range: str,
+def sheets_move_range(spreadsheet_id: str, source_sheet: str, source_range: str,
                dest_sheet: str, dest_start_row: int, dest_start_col: int) -> Dict:
     """
     Move a range to a new location (cut+paste).
@@ -768,7 +767,7 @@ def move_range(spreadsheet_id: str, source_sheet: str, source_range: str,
         dest_start_row: Destination start row (1-based).
         dest_start_col: Destination start column (1-based).
     """
-    if (err := require_editor("move_range")): return err
+    if (err := require_editor("sheets_move_range")): return err
     sheets = _sheets_service()
     src_id = _get_sheet_id(sheets, spreadsheet_id, source_sheet)
     dst_id = _get_sheet_id(sheets, spreadsheet_id, dest_sheet)
@@ -797,7 +796,7 @@ def move_range(spreadsheet_id: str, source_sheet: str, source_range: str,
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def insert_rows(spreadsheet_id: str, sheet_name: str,
+def sheets_insert_rows(spreadsheet_id: str, sheet_name: str,
                 start_row: int, count: int = 1,
                 inherit_from_before: bool = False) -> Dict:
     """
@@ -810,7 +809,7 @@ def insert_rows(spreadsheet_id: str, sheet_name: str,
         count: Number of rows to insert.
         inherit_from_before: If True, new rows inherit formatting from above row.
     """
-    if (err := require_editor("insert_rows")): return err
+    if (err := require_editor("sheets_insert_rows")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -831,7 +830,7 @@ def insert_rows(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def delete_rows(spreadsheet_id: str, sheet_name: str,
+def sheets_delete_rows(spreadsheet_id: str, sheet_name: str,
                 start_row: int, end_row: int) -> Dict:
     """
     Delete rows from a sheet.
@@ -842,7 +841,7 @@ def delete_rows(spreadsheet_id: str, sheet_name: str,
         start_row: First row to delete (1-based, inclusive).
         end_row: Last row to delete (1-based, inclusive).
     """
-    if (err := require_editor("delete_rows")): return err
+    if (err := require_editor("sheets_delete_rows")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -862,7 +861,7 @@ def delete_rows(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def insert_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_insert_columns(spreadsheet_id: str, sheet_name: str,
                    start_column: str, count: int = 1,
                    inherit_from_before: bool = False) -> Dict:
     """
@@ -875,7 +874,7 @@ def insert_columns(spreadsheet_id: str, sheet_name: str,
         count: Number of columns to insert.
         inherit_from_before: Inherit formatting from left column.
     """
-    if (err := require_editor("insert_columns")): return err
+    if (err := require_editor("sheets_insert_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -897,7 +896,7 @@ def insert_columns(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def delete_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_delete_columns(spreadsheet_id: str, sheet_name: str,
                    start_column: str, end_column: str) -> Dict:
     """
     Delete columns from a sheet.
@@ -908,7 +907,7 @@ def delete_columns(spreadsheet_id: str, sheet_name: str,
         start_column: First column letter to delete (e.g. 'C').
         end_column: Last column letter to delete (e.g. 'E').
     """
-    if (err := require_editor("delete_columns")): return err
+    if (err := require_editor("sheets_delete_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -930,7 +929,7 @@ def delete_columns(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def set_column_width(spreadsheet_id: str, sheet_name: str,
+def sheets_set_column_width(spreadsheet_id: str, sheet_name: str,
                      start_column: str, end_column: Optional[str] = None,
                      width_pixels: int = 100) -> Dict:
     """
@@ -943,7 +942,7 @@ def set_column_width(spreadsheet_id: str, sheet_name: str,
         end_column: Last column letter (inclusive). Defaults to same as start.
         width_pixels: Width in pixels.
     """
-    if (err := require_editor("set_column_width")): return err
+    if (err := require_editor("sheets_set_column_width")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -967,7 +966,7 @@ def set_column_width(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def set_row_height(spreadsheet_id: str, sheet_name: str,
+def sheets_set_row_height(spreadsheet_id: str, sheet_name: str,
                    start_row: int, end_row: Optional[int] = None,
                    height_pixels: int = 21) -> Dict:
     """
@@ -980,7 +979,7 @@ def set_row_height(spreadsheet_id: str, sheet_name: str,
         end_row: Last row (1-based, inclusive). Defaults to same as start.
         height_pixels: Height in pixels.
     """
-    if (err := require_editor("set_row_height")): return err
+    if (err := require_editor("sheets_set_row_height")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1003,7 +1002,7 @@ def set_row_height(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def auto_resize_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_auto_resize_columns(spreadsheet_id: str, sheet_name: str,
                         start_column: str, end_column: Optional[str] = None) -> Dict:
     """
     Auto-resize columns to fit their content.
@@ -1014,7 +1013,7 @@ def auto_resize_columns(spreadsheet_id: str, sheet_name: str,
         start_column: First column letter (e.g. 'A').
         end_column: Last column letter. Defaults to same as start.
     """
-    if (err := require_editor("auto_resize_columns")): return err
+    if (err := require_editor("sheets_auto_resize_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1036,7 +1035,7 @@ def auto_resize_columns(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def hide_rows(spreadsheet_id: str, sheet_name: str,
+def sheets_hide_rows(spreadsheet_id: str, sheet_name: str,
               start_row: int, end_row: int) -> Dict:
     """
     Hide a range of rows.
@@ -1047,7 +1046,7 @@ def hide_rows(spreadsheet_id: str, sheet_name: str,
         start_row: First row to hide (1-based).
         end_row: Last row to hide (1-based, inclusive).
     """
-    if (err := require_editor("hide_rows")): return err
+    if (err := require_editor("sheets_hide_rows")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1069,10 +1068,10 @@ def hide_rows(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def show_rows(spreadsheet_id: str, sheet_name: str,
+def sheets_show_rows(spreadsheet_id: str, sheet_name: str,
               start_row: int, end_row: int) -> Dict:
     """Unhide rows."""
-    if (err := require_editor("show_rows")): return err
+    if (err := require_editor("sheets_show_rows")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1094,7 +1093,7 @@ def show_rows(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def hide_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_hide_columns(spreadsheet_id: str, sheet_name: str,
                  start_column: str, end_column: str) -> Dict:
     """
     Hide columns.
@@ -1105,7 +1104,7 @@ def hide_columns(spreadsheet_id: str, sheet_name: str,
         start_column: First column letter to hide (e.g. 'C').
         end_column: Last column letter to hide (inclusive).
     """
-    if (err := require_editor("hide_columns")): return err
+    if (err := require_editor("sheets_hide_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1129,10 +1128,10 @@ def hide_columns(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def show_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_show_columns(spreadsheet_id: str, sheet_name: str,
                  start_column: str, end_column: str) -> Dict:
     """Unhide columns."""
-    if (err := require_editor("show_columns")): return err
+    if (err := require_editor("sheets_show_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1160,7 +1159,7 @@ def show_columns(spreadsheet_id: str, sheet_name: str,
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def format_range(
+def sheets_format_range(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1204,7 +1203,7 @@ def format_range(
                             'TIME', 'DATE_TIME', 'SCIENTIFIC'.
         number_format_pattern: Custom format pattern (e.g. '#,##0.00', 'dd/mm/yyyy').
     """
-    if (err := require_editor("format_range")): return err
+    if (err := require_editor("sheets_format_range")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1277,7 +1276,7 @@ def format_range(
 
 
 @mcp.tool()
-def set_borders(
+def sheets_set_borders(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1302,7 +1301,7 @@ def set_borders(
             Pass None to leave unchanged.
         color_hex: Border color '#RRGGBB'.
     """
-    if (err := require_editor("set_borders")): return err
+    if (err := require_editor("sheets_set_borders")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1336,7 +1335,7 @@ def set_borders(
 
 
 @mcp.tool()
-def merge_cells(spreadsheet_id: str, sheet_name: str, range: str,
+def sheets_merge_cells(spreadsheet_id: str, sheet_name: str, range: str,
                 merge_type: str = "MERGE_ALL") -> Dict:
     """
     Merge cells in a range.
@@ -1347,7 +1346,7 @@ def merge_cells(spreadsheet_id: str, sheet_name: str, range: str,
         range: A1 range to merge (e.g. 'A1:C1').
         merge_type: 'MERGE_ALL', 'MERGE_COLUMNS' (merge each column), 'MERGE_ROWS' (merge each row).
     """
-    if (err := require_editor("merge_cells")): return err
+    if (err := require_editor("sheets_merge_cells")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1364,7 +1363,7 @@ def merge_cells(spreadsheet_id: str, sheet_name: str, range: str,
 
 
 @mcp.tool()
-def unmerge_cells(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
+def sheets_unmerge_cells(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
     """
     Unmerge cells in a range.
 
@@ -1373,7 +1372,7 @@ def unmerge_cells(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
         sheet_name: Sheet name.
         range: A1 range.
     """
-    if (err := require_editor("unmerge_cells")): return err
+    if (err := require_editor("sheets_unmerge_cells")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1387,7 +1386,7 @@ def unmerge_cells(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
 
 
 @mcp.tool()
-def clear_formatting(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
+def sheets_clear_formatting(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
     """
     Remove all formatting from a range (keeps values).
 
@@ -1396,7 +1395,7 @@ def clear_formatting(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
         sheet_name: Sheet name.
         range: A1 range.
     """
-    if (err := require_editor("clear_formatting")): return err
+    if (err := require_editor("sheets_clear_formatting")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1418,7 +1417,7 @@ def clear_formatting(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def freeze_panes(spreadsheet_id: str, sheet_name: str,
+def sheets_freeze_panes(spreadsheet_id: str, sheet_name: str,
                  frozen_rows: int = 0, frozen_columns: int = 0) -> Dict:
     """
     Freeze rows and/or columns (like Excel freeze panes).
@@ -1429,7 +1428,7 @@ def freeze_panes(spreadsheet_id: str, sheet_name: str,
         frozen_rows: Number of rows to freeze from top (0 to unfreeze).
         frozen_columns: Number of columns to freeze from left (0 to unfreeze).
     """
-    if (err := require_editor("freeze_panes")): return err
+    if (err := require_editor("sheets_freeze_panes")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1451,7 +1450,7 @@ def freeze_panes(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def sort_range(spreadsheet_id: str, sheet_name: str, range: str,
+def sheets_sort_range(spreadsheet_id: str, sheet_name: str, range: str,
                sort_specs: List[Dict[str, Any]]) -> Dict:
     """
     Sort a range of cells.
@@ -1467,7 +1466,7 @@ def sort_range(spreadsheet_id: str, sheet_name: str, range: str,
     Example sort_specs:
         [{"column": "B", "ascending": False}, {"column": "A", "ascending": True}]
     """
-    if (err := require_editor("sort_range")): return err
+    if (err := require_editor("sheets_sort_range")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1497,7 +1496,7 @@ def sort_range(spreadsheet_id: str, sheet_name: str, range: str,
 
 
 @mcp.tool()
-def set_basic_filter(spreadsheet_id: str, sheet_name: str,
+def sheets_set_basic_filter(spreadsheet_id: str, sheet_name: str,
                      range: Optional[str] = None) -> Dict:
     """
     Enable the auto-filter dropdown on a range (like Excel filter arrows).
@@ -1507,7 +1506,7 @@ def set_basic_filter(spreadsheet_id: str, sheet_name: str,
         sheet_name: Sheet name.
         range: A1 range for the filter (e.g. 'A1:F1'). If None, applies to whole sheet.
     """
-    if (err := require_editor("set_basic_filter")): return err
+    if (err := require_editor("sheets_set_basic_filter")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1521,7 +1520,7 @@ def set_basic_filter(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def clear_basic_filter(spreadsheet_id: str, sheet_name: str) -> Dict:
+def sheets_clear_basic_filter(spreadsheet_id: str, sheet_name: str) -> Dict:
     """
     Remove the basic filter (auto-filter) from a sheet.
 
@@ -1529,7 +1528,7 @@ def clear_basic_filter(spreadsheet_id: str, sheet_name: str) -> Dict:
         spreadsheet_id: The spreadsheet ID.
         sheet_name: Sheet name.
     """
-    if (err := require_editor("clear_basic_filter")): return err
+    if (err := require_editor("sheets_clear_basic_filter")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1542,7 +1541,7 @@ def clear_basic_filter(spreadsheet_id: str, sheet_name: str) -> Dict:
 
 
 @mcp.tool()
-def group_rows(spreadsheet_id: str, sheet_name: str,
+def sheets_group_rows(spreadsheet_id: str, sheet_name: str,
                start_row: int, end_row: int) -> Dict:
     """
     Group rows (collapse/expand like Excel grouping).
@@ -1553,7 +1552,7 @@ def group_rows(spreadsheet_id: str, sheet_name: str,
         start_row: First row (1-based).
         end_row: Last row (1-based, inclusive).
     """
-    if (err := require_editor("group_rows")): return err
+    if (err := require_editor("sheets_group_rows")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1573,7 +1572,7 @@ def group_rows(spreadsheet_id: str, sheet_name: str,
 
 
 @mcp.tool()
-def group_columns(spreadsheet_id: str, sheet_name: str,
+def sheets_group_columns(spreadsheet_id: str, sheet_name: str,
                   start_column: str, end_column: str) -> Dict:
     """
     Group columns.
@@ -1584,7 +1583,7 @@ def group_columns(spreadsheet_id: str, sheet_name: str,
         start_column: First column letter.
         end_column: Last column letter (inclusive).
     """
-    if (err := require_editor("group_columns")): return err
+    if (err := require_editor("sheets_group_columns")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1610,7 +1609,7 @@ def group_columns(spreadsheet_id: str, sheet_name: str,
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def add_conditional_format_cell_value(
+def sheets_add_conditional_format_cell_value(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1640,7 +1639,7 @@ def add_conditional_format_cell_value(
         font_color: Text color '#RRGGBB'.
         bold: True/False.
     """
-    if (err := require_editor("add_conditional_format_cell_value")): return err
+    if (err := require_editor("sheets_add_conditional_format_cell_value")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1680,7 +1679,7 @@ def add_conditional_format_cell_value(
 
 
 @mcp.tool()
-def add_conditional_format_color_scale(
+def sheets_add_conditional_format_color_scale(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1699,7 +1698,7 @@ def add_conditional_format_color_scale(
         mid_color: Optional midpoint color.
         max_color: Color for maximum values (default green '#00FF00').
     """
-    if (err := require_editor("add_conditional_format_color_scale")): return err
+    if (err := require_editor("sheets_add_conditional_format_color_scale")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1728,7 +1727,7 @@ def add_conditional_format_color_scale(
 
 
 @mcp.tool()
-def delete_conditional_formats(spreadsheet_id: str, sheet_name: str) -> Dict:
+def sheets_delete_conditional_formats(spreadsheet_id: str, sheet_name: str) -> Dict:
     """
     Delete ALL conditional formatting rules from a sheet.
 
@@ -1736,7 +1735,7 @@ def delete_conditional_formats(spreadsheet_id: str, sheet_name: str) -> Dict:
         spreadsheet_id: The spreadsheet ID.
         sheet_name: Sheet name.
     """
-    if (err := require_editor("delete_conditional_formats")): return err
+    if (err := require_editor("sheets_delete_conditional_formats")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1762,7 +1761,7 @@ def delete_conditional_formats(spreadsheet_id: str, sheet_name: str) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def set_data_validation_list(
+def sheets_set_data_validation_list(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1783,7 +1782,7 @@ def set_data_validation_list(
         strict: Reject values not in list.
         input_message: Optional helper message shown to user.
     """
-    if (err := require_editor("set_data_validation_list")): return err
+    if (err := require_editor("sheets_set_data_validation_list")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1812,7 +1811,7 @@ def set_data_validation_list(
 
 
 @mcp.tool()
-def set_data_validation_number(
+def sheets_set_data_validation_number(
     spreadsheet_id: str,
     sheet_name: str,
     range: str,
@@ -1835,7 +1834,7 @@ def set_data_validation_number(
         strict: Reject invalid values.
         input_message: Helper message.
     """
-    if (err := require_editor("set_data_validation_number")): return err
+    if (err := require_editor("sheets_set_data_validation_number")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1860,7 +1859,7 @@ def set_data_validation_number(
 
 
 @mcp.tool()
-def delete_data_validation(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
+def sheets_delete_data_validation(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
     """
     Remove data validation from a range.
 
@@ -1869,7 +1868,7 @@ def delete_data_validation(spreadsheet_id: str, sheet_name: str, range: str) -> 
         sheet_name: Sheet name.
         range: A1 range.
     """
-    if (err := require_editor("delete_data_validation")): return err
+    if (err := require_editor("sheets_delete_data_validation")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1887,7 +1886,7 @@ def delete_data_validation(spreadsheet_id: str, sheet_name: str, range: str) -> 
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def list_named_ranges(spreadsheet_id: str) -> List[Dict]:
+def sheets_list_named_ranges(spreadsheet_id: str) -> List[Dict]:
     """
     List all named ranges in a spreadsheet.
 
@@ -1900,7 +1899,7 @@ def list_named_ranges(spreadsheet_id: str) -> List[Dict]:
 
 
 @mcp.tool()
-def create_named_range(spreadsheet_id: str, name: str,
+def sheets_create_named_range(spreadsheet_id: str, name: str,
                        sheet_name: str, range: str) -> Dict:
     """
     Create a named range.
@@ -1911,7 +1910,7 @@ def create_named_range(spreadsheet_id: str, name: str,
         sheet_name: Sheet name.
         range: A1 range (e.g. 'A1:D100').
     """
-    if (err := require_editor("create_named_range")): return err
+    if (err := require_editor("sheets_create_named_range")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1928,15 +1927,15 @@ def create_named_range(spreadsheet_id: str, name: str,
 
 
 @mcp.tool()
-def delete_named_range(spreadsheet_id: str, named_range_id: str) -> Dict:
+def sheets_delete_named_range(spreadsheet_id: str, named_range_id: str) -> Dict:
     """
     Delete a named range by its ID.
 
     Args:
         spreadsheet_id: The spreadsheet ID.
-        named_range_id: The ID of the named range (from list_named_ranges).
+        named_range_id: The ID of the named range (from sheets_list_named_ranges).
     """
-    if (err := require_editor("delete_named_range")): return err
+    if (err := require_editor("sheets_delete_named_range")): return err
     sheets = _sheets_service()
     sheets.spreadsheets().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -1950,7 +1949,7 @@ def delete_named_range(spreadsheet_id: str, named_range_id: str) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def protect_range(spreadsheet_id: str, sheet_name: str, range: str,
+def sheets_protect_range(spreadsheet_id: str, sheet_name: str, range: str,
                   description: str = "",
                   warning_only: bool = False,
                   editors: Optional[List[str]] = None) -> Dict:
@@ -1965,7 +1964,7 @@ def protect_range(spreadsheet_id: str, sheet_name: str, range: str,
         warning_only: If True, shows warning but allows editing.
         editors: List of email addresses that CAN edit the protected range.
     """
-    if (err := require_editor("protect_range")): return err
+    if (err := require_editor("sheets_protect_range")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -1987,7 +1986,7 @@ def protect_range(spreadsheet_id: str, sheet_name: str, range: str,
 
 
 @mcp.tool()
-def list_protected_ranges(spreadsheet_id: str, sheet_name: Optional[str] = None) -> List[Dict]:
+def sheets_list_protected_ranges(spreadsheet_id: str, sheet_name: Optional[str] = None) -> List[Dict]:
     """
     List all protected ranges in a spreadsheet.
 
@@ -2012,15 +2011,15 @@ def list_protected_ranges(spreadsheet_id: str, sheet_name: Optional[str] = None)
 
 
 @mcp.tool()
-def remove_protection(spreadsheet_id: str, protected_range_id: int) -> Dict:
+def sheets_remove_protection(spreadsheet_id: str, protected_range_id: int) -> Dict:
     """
     Remove a protection rule.
 
     Args:
         spreadsheet_id: The spreadsheet ID.
-        protected_range_id: The ID from list_protected_ranges.
+        protected_range_id: The ID from sheets_list_protected_ranges.
     """
-    if (err := require_editor("remove_protection")): return err
+    if (err := require_editor("sheets_remove_protection")): return err
     sheets = _sheets_service()
     sheets.spreadsheets().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -2034,7 +2033,7 @@ def remove_protection(spreadsheet_id: str, protected_range_id: int) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def add_note(spreadsheet_id: str, sheet_name: str, cell: str,
+def sheets_add_note(spreadsheet_id: str, sheet_name: str, cell: str,
              note: str) -> Dict:
     """
     Add a note (comment) to a cell.
@@ -2045,7 +2044,7 @@ def add_note(spreadsheet_id: str, sheet_name: str, cell: str,
         cell: Cell reference (e.g. 'A1').
         note: Note text.
     """
-    if (err := require_editor("add_note")): return err
+    if (err := require_editor("sheets_add_note")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -2063,7 +2062,7 @@ def add_note(spreadsheet_id: str, sheet_name: str, cell: str,
 
 
 @mcp.tool()
-def clear_notes(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
+def sheets_clear_notes(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
     """
     Remove notes from a cell range.
 
@@ -2072,7 +2071,7 @@ def clear_notes(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
         sheet_name: Sheet name.
         range: A1 range.
     """
-    if (err := require_editor("clear_notes")): return err
+    if (err := require_editor("sheets_clear_notes")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -2094,7 +2093,7 @@ def clear_notes(spreadsheet_id: str, sheet_name: str, range: str) -> Dict:
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def add_chart(
+def sheets_add_chart(
     spreadsheet_id: str,
     sheet_name: str,
     chart_type: str,
@@ -2125,7 +2124,7 @@ def add_chart(
         width: Chart width in pixels.
         height: Chart height in pixels.
     """
-    if (err := require_editor("add_chart")): return err
+    if (err := require_editor("sheets_add_chart")): return err
     sheets = _sheets_service()
     sheet_id = _get_sheet_id(sheets, spreadsheet_id, sheet_name)
     if sheet_id is None:
@@ -2191,15 +2190,15 @@ def add_chart(
 
 
 @mcp.tool()
-def delete_chart(spreadsheet_id: str, chart_id: int) -> Dict:
+def sheets_delete_chart(spreadsheet_id: str, chart_id: int) -> Dict:
     """
     Delete a chart by its ID.
 
     Args:
         spreadsheet_id: The spreadsheet ID.
-        chart_id: Chart ID (from add_chart or list_charts).
+        chart_id: Chart ID (from sheets_add_chart or sheets_list_charts).
     """
-    if (err := require_editor("delete_chart")): return err
+    if (err := require_editor("sheets_delete_chart")): return err
     sheets = _sheets_service()
     sheets.spreadsheets().batchUpdate(
         spreadsheetId=spreadsheet_id,
@@ -2209,7 +2208,7 @@ def delete_chart(spreadsheet_id: str, chart_id: int) -> Dict:
 
 
 @mcp.tool()
-def list_charts(spreadsheet_id: str, sheet_name: Optional[str] = None) -> List[Dict]:
+def sheets_list_charts(spreadsheet_id: str, sheet_name: Optional[str] = None) -> List[Dict]:
     """
     List all charts in a spreadsheet.
 
@@ -2238,7 +2237,7 @@ def list_charts(spreadsheet_id: str, sheet_name: Optional[str] = None) -> List[D
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def find_and_replace(
+def sheets_find_and_replace(
     spreadsheet_id: str,
     find: str,
     replacement: str,
@@ -2261,7 +2260,7 @@ def find_and_replace(
         search_by_regex: Treat 'find' as a regular expression.
         include_formulas: Search within formulas too.
     """
-    if (err := require_editor("find_and_replace")): return err
+    if (err := require_editor("sheets_find_and_replace")): return err
     sheets = _sheets_service()
     req = {
         "find": find,
@@ -2294,7 +2293,7 @@ def find_and_replace(
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def create_pivot_table(
+def sheets_create_pivot_table(
     spreadsheet_id: str,
     source_sheet: str,
     source_range: str,
@@ -2321,7 +2320,7 @@ def create_pivot_table(
 
     summarizeFunction options: SUM, COUNTA, COUNT, COUNTUNIQUE, AVERAGE, MAX, MIN, MEDIAN, PRODUCT, STDEV, STDEVP, VAR, VARP, CUSTOM
     """
-    if (err := require_editor("create_pivot_table")): return err
+    if (err := require_editor("sheets_create_pivot_table")): return err
     sheets = _sheets_service()
     src_sheet_id = _get_sheet_id(sheets, spreadsheet_id, source_sheet)
     dst_sheet_id = _get_sheet_id(sheets, spreadsheet_id, dest_sheet)
@@ -2361,7 +2360,7 @@ def create_pivot_table(
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def set_hyperlink(spreadsheet_id: str, sheet_name: str, cell: str,
+def sheets_set_hyperlink(spreadsheet_id: str, sheet_name: str, cell: str,
                   url: str, display_text: Optional[str] = None) -> Dict:
     """
     Set a hyperlink in a cell using a HYPERLINK formula.
@@ -2373,7 +2372,7 @@ def set_hyperlink(spreadsheet_id: str, sheet_name: str, cell: str,
         url: URL for the hyperlink.
         display_text: Text to display (defaults to URL).
     """
-    if (err := require_editor("set_hyperlink")): return err
+    if (err := require_editor("sheets_set_hyperlink")): return err
     text = display_text or url
     formula = f'=HYPERLINK("{url}","{text}")'
     sheets = _sheets_service()
@@ -2392,7 +2391,7 @@ def set_hyperlink(spreadsheet_id: str, sheet_name: str, cell: str,
 # ─────────────────────────────────────────────
 
 @mcp.tool()
-def batch_requests(spreadsheet_id: str, requests: List[Dict]) -> Dict:
+def sheets_batch_requests(spreadsheet_id: str, requests: List[Dict]) -> Dict:
     """
     Send raw batchUpdate requests directly to the Sheets API.
     Use this for advanced operations not covered by other tools.
@@ -2403,34 +2402,13 @@ def batch_requests(spreadsheet_id: str, requests: List[Dict]) -> Dict:
 
     See: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/batchUpdate
     """
-    if (err := require_editor("batch_requests")): return err
+    if (err := require_editor("sheets_batch_requests")): return err
     sheets = _sheets_service()
     result = sheets.spreadsheets().batchUpdate(
         spreadsheetId=spreadsheet_id,
         body={"requests": requests}
     ).execute()
     return {"replies": result.get('replies', []), "spreadsheetId": result.get('spreadsheetId')}
-
-
-# ─────────────────────────────────────────────
-# 18. DRIVE / FOLDER TOOLS
-# ─────────────────────────────────────────────
-
-@mcp.tool()
-def list_folders(parent_folder_id: Optional[str] = None) -> List[Dict]:
-    """
-    List Google Drive folders.
-
-    Args:
-        parent_folder_id: Optional parent folder ID. If None, lists root-level folders.
-    """
-    drive = _drive_service()
-    if parent_folder_id:
-        q = f"mimeType='application/vnd.google-apps.folder' and '{parent_folder_id}' in parents and trashed=false"
-    else:
-        q = "mimeType='application/vnd.google-apps.folder' and trashed=false"
-    result = drive.files().list(q=q, fields="files(id,name,parents)", pageSize=100).execute()
-    return result.get('files', [])
 
 
 # ─────────────────────────────────────────────

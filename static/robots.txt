@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Allow: /static/privacy.html
+Allow: /static/terms.html
+Allow: /blog/
+
+# Disallow app pages (no marketing value, no indexing needed)
+Disallow: /onboard
+Disallow: /manage
+Disallow: /connect
+Disallow: /setup
+Disallow: /api/
+Disallow: /auth/
+Disallow: /billing/
+Disallow: /user/
+Disallow: /admin/
+Disallow: /mcp
+
+Sitemap: https://marketingmcp.com/sitemap.xml

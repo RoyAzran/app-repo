@@ -57,6 +57,18 @@ def _admin_svc():
     return build("analyticsadmin", "v1beta", credentials=_creds())
 
 
+def _ga4_data_client():
+    """Return a BetaAnalyticsDataClient (gapic) for the current user."""
+    from google.analytics.data_v1beta import BetaAnalyticsDataClient
+    return BetaAnalyticsDataClient(credentials=_creds())
+
+
+def _ga4_admin_client():
+    """Return an AnalyticsAdminServiceClient (gapic) for the current user."""
+    from google.analytics.admin_v1alpha import AnalyticsAdminServiceClient
+    return AnalyticsAdminServiceClient(credentials=_creds())
+
+
 def _resolve_property(property_id: str) -> str:
     if property_id:
         pid = property_id.strip()
@@ -94,7 +106,7 @@ def _parse_report(response: dict) -> list:
 # ---------------------------------------------------------------------------
 
 @mcp.tool()
-def list_ga_properties() -> str:
+def ga4_list_properties() -> str:
     """List all Google Analytics 4 properties the user has access to."""
     try:
         admin = _admin_svc()
@@ -114,13 +126,13 @@ def list_ga_properties() -> str:
 
 
 @mcp.tool()
-def list_properties() -> str:
+def ga4_list_all_properties() -> str:
     """List all Google Analytics 4 properties the user has access to."""
-    return list_ga_properties()
+    return ga4_list_properties()
 
 
 @mcp.tool()
-def run_ga_report(
+def ga4_run_custom_report(
     dimensions: str,
     metrics: str,
     property_id: str = "",
@@ -158,7 +170,7 @@ def run_ga_report(
 
 
 @mcp.tool()
-def get_ga_overview(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
+def ga4_overview(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
     """Get a high-level traffic overview from GA4: sessions, users, pageviews, bounce rate, average session duration.
 
     Args:
@@ -187,7 +199,7 @@ def get_ga_overview(property_id: str = "", start_date: str = "", end_date: str =
 
 
 @mcp.tool()
-def get_ga_traffic_sources(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 15) -> str:
+def ga4_traffic_sources(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 15) -> str:
     """Get GA4 traffic broken down by default channel group.
 
     Args:
@@ -213,7 +225,7 @@ def get_ga_traffic_sources(property_id: str = "", start_date: str = "", end_date
 
 
 @mcp.tool()
-def get_ga_top_pages(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_top_pages(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get the most visited pages in GA4 by page views.
 
     Args:
@@ -239,7 +251,7 @@ def get_ga_top_pages(property_id: str = "", start_date: str = "", end_date: str 
 
 
 @mcp.tool()
-def get_ga_device_breakdown(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
+def ga4_device_breakdown(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
     """Get GA4 sessions and conversions broken down by device category: desktop, mobile, tablet.
 
     Args:
@@ -263,7 +275,7 @@ def get_ga_device_breakdown(property_id: str = "", start_date: str = "", end_dat
 
 
 @mcp.tool()
-def get_ga_conversions(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_conversions(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get GA4 conversion events with their counts and conversion rates.
 
     Args:
@@ -289,7 +301,7 @@ def get_ga_conversions(property_id: str = "", start_date: str = "", end_date: st
 
 
 @mcp.tool()
-def get_ga_ecommerce(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
+def ga4_ecommerce(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
     """Get GA4 ecommerce overview: revenue, transactions, average order value, purchase rate.
 
     Args:
@@ -319,7 +331,7 @@ def get_ga_ecommerce(property_id: str = "", start_date: str = "", end_date: str 
 
 
 @mcp.tool()
-def get_ga_realtime(property_id: str = "") -> str:
+def ga4_realtime(property_id: str = "") -> str:
     """Get real-time active users currently on the site (last 30 minutes), broken down by page and country.
 
     Args:
@@ -349,7 +361,7 @@ def get_ga_realtime(property_id: str = "") -> str:
 
 
 @mcp.tool()
-def get_ga_landing_pages(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_landing_pages(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get GA4 landing page performance: sessions, bounce rate, conversions, engagement rate.
 
     Args:
@@ -375,7 +387,7 @@ def get_ga_landing_pages(property_id: str = "", start_date: str = "", end_date: 
 
 
 @mcp.tool()
-def get_ga_user_retention(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
+def ga4_user_retention(property_id: str = "", start_date: str = "", end_date: str = "") -> str:
     """Get GA4 user retention metrics: new vs returning users, engagement rate, sessions per user.
 
     Args:
@@ -399,7 +411,7 @@ def get_ga_user_retention(property_id: str = "", start_date: str = "", end_date:
 
 
 @mcp.tool()
-def get_ga_geo(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20, breakdown: str = "country") -> str:
+def ga4_geographic_breakdown(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20, breakdown: str = "country") -> str:
     """Get GA4 sessions and users broken down by geographic location.
 
     Args:
@@ -426,7 +438,7 @@ def get_ga_geo(property_id: str = "", start_date: str = "", end_date: str = "", 
 
 
 @mcp.tool()
-def get_ga_user_journey(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_user_journey(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get GA4 user journey data — how users navigate through the site using page path combined with channel.
 
     Args:
@@ -452,7 +464,7 @@ def get_ga_user_journey(property_id: str = "", start_date: str = "", end_date: s
 
 
 @mcp.tool()
-def get_ga_events(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 25) -> str:
+def ga4_events(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 25) -> str:
     """Get all GA4 events with their counts and unique user counts.
 
     Args:
@@ -478,7 +490,7 @@ def get_ga_events(property_id: str = "", start_date: str = "", end_date: str = "
 
 
 @mcp.tool()
-def get_ga_funnel(
+def ga4_funnel_analysis(
     steps: list[str],
     property_id: str = "",
     start_date: str = "",
@@ -522,7 +534,7 @@ def get_ga_funnel(
 
 
 @mcp.tool()
-def get_ga_audiences(property_id: str = "") -> str:
+def ga4_audiences(property_id: str = "") -> str:
     """List GA4 audiences defined in the property.
 
     Args:
@@ -539,7 +551,7 @@ def get_ga_audiences(property_id: str = "") -> str:
 
 
 @mcp.tool()
-def get_ga_segments(property_id: str = "", start_date: str = "", end_date: str = "", segment_filter: str = "") -> str:
+def ga4_segment_analysis(property_id: str = "", start_date: str = "", end_date: str = "", segment_filter: str = "") -> str:
     """Get GA4 performance segmented by session default channel.
 
     Args:
@@ -570,7 +582,7 @@ def get_ga_segments(property_id: str = "", start_date: str = "", end_date: str =
 
 
 @mcp.tool()
-def get_ga_acquisition(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_acquisition_channels(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get GA4 user acquisition broken down by source / medium / campaign.
 
     Args:
@@ -596,7 +608,7 @@ def get_ga_acquisition(property_id: str = "", start_date: str = "", end_date: st
 
 
 @mcp.tool()
-def get_ga_items(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
+def ga4_ecommerce_items(property_id: str = "", start_date: str = "", end_date: str = "", row_limit: int = 20) -> str:
     """Get GA4 ecommerce item performance: items viewed, added to cart, purchased, and revenue per item.
 
     Args:
@@ -622,7 +634,7 @@ def get_ga_items(property_id: str = "", start_date: str = "", end_date: str = ""
 
 
 @mcp.tool()
-def get_ga_metadata(property_id: str = "") -> str:
+def ga4_available_metrics(property_id: str = "") -> str:
     """Get the list of all available dimensions and metrics for a GA4 property.
 
     Args:
